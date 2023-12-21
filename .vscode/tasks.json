@@ -6,7 +6,7 @@
             "type": "shell",
             "command": "./mvnw",
             "args": [
-                "clean",
+                // "clean",
                 "install"
             ],
             "group": {
