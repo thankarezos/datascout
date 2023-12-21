@@ -1,0 +1,25 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build-backend",
+            "type": "shell",
+            "command": "./mvnw",
+            "args": [
+                "clean",
+                "install"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/backend"
+            }
+        }
+    ]
+}

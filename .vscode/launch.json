@@ -10,7 +10,8 @@
             "request": "launch",
             "name": "Kotlin Launch",
             "projectRoot": "${workspaceFolder}/backend",
-            "mainClass": "com.datascout.datascout.DatascoutApplicationKt"
+            "mainClass": "com.datascout.datascout.DatascoutApplicationKt",
+            "preLaunchTask": "build-backend" 
         },
     ]
 }
