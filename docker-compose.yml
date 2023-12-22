@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+
+  db:
+    container_name: datascout_db
+    image: "postgres:14.2"
+    environment:
+      POSTGRES_USER: datascout
+      POSTGRES_PASSWORD: datascout
+      POSTGRES_DB: datascout_db
+    ports:
+      - "9432:5432"
+    networks:
+      - reco
+    profiles:
+      - dev
