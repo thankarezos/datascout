@@ -94,8 +94,9 @@ class Request(BaseModel):
 
 @app.get("/infer")
 async def root(req : Request ):
+    images = []
     if req.raw_imgs is not None:
-        images = [from_bytes(s) for s in req.raw_imgs]
+        images += [from_bytes(s) for s in req.raw_imgs]
     if req.urls is not None:
         assert req.urls is not None
         images += [from_url(u) for u in req.urls]
@@ -109,7 +110,7 @@ async def root(req : Request ):
 
     resp = {"results":[{k,to_bytes(v)} for k,v in pred.items()]}
     
-    if req.m_DoAnnotate:
+    if req.do_annotate:
         resp["ann"] = [None]* len(images)
         for i,image in enumerate(images):
             annotate(pred,image)
