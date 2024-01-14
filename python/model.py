@@ -93,7 +93,7 @@ class Request(BaseModel):
 
 
 @app.get("/infer")
-async def root(req : Request):
+async def root(req : Request ):
     if req.m_Bytes is not None:
         image = from_bytes(req.m_Bytes)
     else:
@@ -103,7 +103,7 @@ async def root(req : Request):
     if req.m_Whitelist:
         pred = filter(pred,set(req.m_Whitelist))
 
-    resp = {"results":[{k,to_bytes(v)} for k,v in pred]}
+    resp = {"results":[{k,to_bytes(v)} for k,v in pred.items()]}
     
     if req.m_DoAnnotate:
         annotate(pred,image)
