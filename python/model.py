@@ -9,6 +9,7 @@ import numpy as np
 from fastapi import FastAPI
 import uvicorn
 from pydantic import BaseModel
+from typing import Optional
 
 app = FastAPI()
 
