@@ -33,7 +33,7 @@ class Model:
        assert Model.__processor is not None and Model.__model is not None
        inputs = Model.__processor(images=image, return_tensors="pt")
        outputs = Model.__model(**inputs)
-       target_sizes = [ torch.tensor([img.size[::-1]]) for img in image ]
+       target_sizes = [ img.size[::-1] for img in image ]
        return Model.__processor.post_process_object_detection(outputs, target_sizes=target_sizes, threshold=0.9)[0]
 
 
