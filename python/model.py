@@ -34,7 +34,7 @@ class Model:
        inputs = Model.__processor(images=image, return_tensors="pt")
        outputs = Model.__model(**inputs)
        target_sizes = [ img.size[::-1] for img in image ]
-       return Model.__processor.post_process_object_detection(outputs, target_sizes=target_sizes, threshold=0.9)[0]
+       return Model.__processor.post_process_object_detection(outputs, target_sizes=target_sizes, threshold=0.9)
 
 
 def from_url(url) -> Image:
@@ -106,14 +106,12 @@ async def root(req : Request ):
         s = set(req.whitelist)
         pred = [ filter(p, s)  for  p  in pred ]
 
-    print(pred)
-
-    resp = {"results":[{k,to_bytes(v)} for k,v in pred.items()]}
+    resp = {"results":[[{k,to_bytes(v)} for k,v in p.items()] for p in pred]}
     
     if req.do_annotate:
         resp["ann"] = [None]* len(images)
         for i,image in enumerate(images):
-            annotate(pred,image)
+            annotate(pred[i],image)
             resp["ann"][i] = dump_bytes(image)
     return resp
 
