@@ -43,6 +43,10 @@ def from_url(url) -> Image:
 def dump_bytes(im : Image)->str:
     return json.dumps(np.array(im).tolist())
 
+
+def to_bytes(t : torch.tensor)->str:
+    return json.dumps(t.detach().cpu().numpy().tolist())
+
 def from_bytes(bytes : str | bytes | bytearray)->Image:
     return Image.fromarray(np.array(json.loads(bytes),dtype='uint8'))
 
@@ -98,10 +102,13 @@ async def root(req : Request):
     pred = Model.predict(image)
     if req.m_Whitelist:
         pred = filter(pred,set(req.m_Whitelist))
-    resp = {"results":pred}
+
+    resp = {"results":[{k,to_bytes(v)} for k,v in pred]}
+    
     if req.m_DoAnnotate:
         annotate(pred,image)
         resp["ann"] = dump_bytes(image)
+    
     return resp
 
 if __name__ =='__main__':
