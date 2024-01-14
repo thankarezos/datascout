@@ -86,23 +86,23 @@ def test():
 
 
 class Request(BaseModel):
-    m_Bytes : Optional[list[bytes]] | Optional[list[str]] = None
-    m_Link : Optional[list[str]] = None
-    m_Whitelist : Optional[list[str]] = []
-    m_DoAnnotate : Optional[bool] = False
+    raw_imgs : Optional[list[bytes]] | Optional[list[str]] = None
+    urls : Optional[list[str]] = None
+    whitelist : Optional[list[str]] = []
+    do_annotate : Optional[bool] = False
 
 
 @app.get("/infer")
 async def root(req : Request ):
-    if req.m_Bytes is not None:
-        images = [from_bytes(s) for s in req.m_Bytes]
-    if req.m_Link is not None:
-        assert req.m_Link is not None
-        images += [from_url(u) for u in req.m_Link]
+    if req.raw_imgs is not None:
+        images = [from_bytes(s) for s in req.raw_imgs]
+    if req.urls is not None:
+        assert req.urls is not None
+        images += [from_url(u) for u in req.urls]
 
     pred = Model.predict(images)
-    if req.m_Whitelist:
-        s = set(req.m_Whitelist)
+    if req.whitelist:
+        s = set(req.whitelist)
         pred = [ filter(p, s)  for  p  in pred ]
 
     print(pred)
