@@ -8,11 +8,12 @@ numpy = "*"
 transformers = "*"
 fastapi = "*"
 pydantic = "*"
-pillow = "==9.1.1"
+pillow = "*"
 requests = "*"
 torch = "*"
-uvicorn = {extras = ["standard"], version = "*"}
+uvicorn = {extras = ["standard"] }
 timm = "*"
+python-multipart = "*"
 
 [dev-packages]
 
