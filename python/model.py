@@ -9,7 +9,7 @@ import numpy as np
 from fastapi import FastAPI
 import uvicorn
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional 
 
 app = FastAPI()
 
@@ -29,11 +29,11 @@ class Model:
          Model.__model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50")
 
     @staticmethod
-    def predict(image:Image) -> dict:
+    def predict(image) -> dict:
        assert Model.__processor is not None and Model.__model is not None
        inputs = Model.__processor(images=image, return_tensors="pt")
        outputs = Model.__model(**inputs)
-       target_sizes = torch.tensor([image.size[::-1]])
+       target_sizes = [ torch.tensor([img.size[::-1]]) for img in image ]
        return Model.__processor.post_process_object_detection(outputs, target_sizes=target_sizes, threshold=0.9)[0]
 
 
