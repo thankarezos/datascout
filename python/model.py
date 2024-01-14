@@ -79,11 +79,12 @@ def test():
    
    image.show()
 
+
 class Request(BaseModel):
-    m_Bytes : bytes | str = None
-    m_Link : str = None
-    m_Whitelist : list[str] = []
-    m_DoAnnotate : bool = False
+    m_Bytes : Optional[bytes] | Optional[str] = None
+    m_Link : Optional[str] = None
+    m_Whitelist : Optional[list[str]] = []
+    m_DoAnnotate : Optional[bool] = False
 
 
 @app.get("/infer")
@@ -103,4 +104,5 @@ async def root(req : Request):
     return resp
 
 if __name__ =='__main__':
+    Model.load()
     uvicorn.run(app,host="0.0.0.0", port=3333)
