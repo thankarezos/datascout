@@ -13,7 +13,7 @@ def main():
     print(res)
     annt_f = {
         'uri':"https://media.discordapp.net/attachments/1079599772287127653/1191881082375770112/415059350_390596366697355_6342356019264221322_n.png?ex=65a70cc2&is=659497c2&hm=29163c39279e10fbae2a9a6a16e293e10cace0da51e8fe5eeb7527a7696f4554&=&format=webp&quality=lossless&width=475&height=594"
-        ,'scores': json.dumps(json.loads(res))
+        ,'scores': json.dumps(json.loads(res)[0])
     }
     img_b = requests.post('http://localhost:3333/annt',data=annt_f,stream=True)
     

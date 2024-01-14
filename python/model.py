@@ -125,10 +125,9 @@ async def root(file : Annotated[list[UploadFile],Form()] = None ,
         s = set(whitelist)
         pred = [ filter(p, s)  for  p  in pred ]
 
-    pred = pred[0]
-    ret = { k : to_bytes(v) for k,v  in pred.items()}
-    
-    ret["labels"] = [Model.id2label(s) for s in ret["labels"]]
+    ret = [{ k : to_bytes(v) for k,v  in p.items()} for p in pred]
+    for i in range(len(ret)):
+        ret[i]["labels"] = [Model.id2label(s) for s in ret[i]["labels"]]
 
     return ret
 
