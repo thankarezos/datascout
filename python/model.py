@@ -88,8 +88,8 @@ def test():
 class Request(BaseModel):
     m_Bytes : Optional[list[bytes]] | Optional[list[str]] = None
     m_Link : Optional[list[str]] = None
-    m_Whitelist : Optional[list[list[str]]] = []
-    m_DoAnnotate : Optional[list[bool]] = False
+    m_Whitelist : Optional[list[str]] = []
+    m_DoAnnotate : Optional[bool] = False
 
 
 @app.get("/infer")
@@ -102,20 +102,18 @@ async def root(req : Request ):
 
     pred = Model.predict(images)
     if req.m_Whitelist:
-        pred = [ filter(p, set(flt))  for  p , flt in zip(pred,req.m_Whitelist) ]
+        s = set(req.m_Whitelist)
+        pred = [ filter(p, s)  for  p  in pred ]
 
     print(pred)
-    
+
     resp = {"results":[{k,to_bytes(v)} for k,v in pred.items()]}
     
     if req.m_DoAnnotate:
-        annotate(pred,image)
-        resp["ann"] = []
+        resp["ann"] = [None]* len(images)
         for i,image in enumerate(images):
-            if req.m_DoAnnotate:
-                annotate(pred[i],image)
-                resp["ann"].append(dump_bytes(image))
-    
+            annotate(pred,image)
+            resp["ann"][i] = dump_bytes(image)
     return resp
 
 if __name__ =='__main__':
