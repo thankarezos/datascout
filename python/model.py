@@ -86,28 +86,35 @@ def test():
 
 
 class Request(BaseModel):
-    m_Bytes : Optional[bytes] | Optional[str] = None
-    m_Link : Optional[str] = None
-    m_Whitelist : Optional[list[str]] = []
-    m_DoAnnotate : Optional[bool] = False
+    m_Bytes : Optional[list[bytes]] | Optional[list[str]] = None
+    m_Link : Optional[list[str]] = None
+    m_Whitelist : Optional[list[list[str]]] = []
+    m_DoAnnotate : Optional[list[bool]] = False
 
 
 @app.get("/infer")
 async def root(req : Request ):
     if req.m_Bytes is not None:
-        image = from_bytes(req.m_Bytes)
-    else:
+        images = [from_bytes(s) for s in req.m_Bytes]
+    if req.m_Link is not None:
         assert req.m_Link is not None
-        image = from_url(req.m_Link) 
-    pred = Model.predict(image)
-    if req.m_Whitelist:
-        pred = filter(pred,set(req.m_Whitelist))
+        images += [from_url(u) for u in req.m_Link]
 
+    pred = Model.predict(images)
+    if req.m_Whitelist:
+        pred = [ filter(p, set(flt))  for  p , flt in zip(pred,req.m_Whitelist) ]
+
+    print(pred)
+    
     resp = {"results":[{k,to_bytes(v)} for k,v in pred.items()]}
     
     if req.m_DoAnnotate:
         annotate(pred,image)
-        resp["ann"] = dump_bytes(image)
+        resp["ann"] = []
+        for i,image in enumerate(images):
+            if req.m_DoAnnotate:
+                annotate(pred[i],image)
+                resp["ann"].append(dump_bytes(image))
     
     return resp
 
