@@ -8,7 +8,7 @@ numpy = "*"
 transformers = "*"
 fastapi = "*"
 pydantic = "*"
-pillow = "*"
+pillow = "==9.1.1"
 requests = "*"
 torch = "*"
 uvicorn = {extras = ["standard"], version = "*"}

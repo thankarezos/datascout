@@ -67,7 +67,7 @@ def annotate(results :dict,image:Image) ->None:
           box = [round(i, 2) for i in box.tolist()]
           draw.rectangle(box,outline='lightgreen',width=2)
           text = f"{Model.id2label(label.item())}: {round(score.item(),3)*100}%"
-          text_width, text_height = draw.textsize(text)
+          text_width, text_height = draw.textlength(text), draw.textlength(text)
           text_x = (box[0] + box[2] - text_width) // 2
           text_y = box[1] - text_height - 5 
           font = ImageFont.truetype("arial.ttf", 16)
