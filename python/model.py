@@ -59,13 +59,16 @@ def from_bytes(bytes : str | bytes | bytearray)->Image:
 def filter(results : dict , whitelist : set = None) -> dict:
     if whitelist is None:
         return results
-    out:dict = {'scores':[],'labels':[],'boxes':[]}
+    out =  {"scores":[],'labels':[],'boxes':[]}
+    any_ : bool = False
     for score , label , box in zip(results['scores'],results['labels'],results['boxes']): 
         if Model.id2label(label.item()) in whitelist:
-            out["scores"].append(score)
-            out["labels"].append(label)
-            out["boxes"].append(box)
-    return out
+            any_ = True
+            out["scores"] .append(score)
+            out["labels"] .append(label)
+            out["boxes"]  .append(box)
+            
+    return out if any_ else {}
 
 def annotate(results :dict,image:Image) ->None:
        draw = ImageDraw.Draw(image)
@@ -123,9 +126,14 @@ async def root(file : Annotated[list[UploadFile],Form()] = None ,
     pred = Model.predict(images)
     if whitelist:
         s = set(whitelist)
-        pred = [ filter(p, s)  for  p  in pred ]
-
-    ret = [{ k : to_bytes(v) for k,v  in p.items()} for p in pred]
+        newpreds = []
+        for i in range(len(pred)):
+            f = filter(pred[i],s)
+            if len(f):
+                newpreds.append(f)
+        pred = newpreds
+    print(pred)
+    ret = [{ k : [to_bytes(v_) for v_ in v] for k,v  in p.items()} for p in pred]
     for i in range(len(ret)):
         ret[i]["labels"] = [Model.id2label(s) for s in ret[i]["labels"]]
 
