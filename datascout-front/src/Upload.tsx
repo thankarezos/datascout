@@ -5,10 +5,18 @@ import { message, Upload } from "antd";
 
 const { Dragger } = Upload;
 
+//get request to http://localhost:8080/test
+
+// const get = async () => {
+//     const response = await fetch("http://localhost:8080/test");
+//     const data = await response.json();
+//     console.log(data);
+// };
+
 const props: UploadProps = {
   name: "file",
   multiple: true,
-  action: "https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188",
+  action: "http://localhost:8080/upload",
   onChange(info) {
     const { status } = info.file;
     if (status !== "uploading") {

@@ -7,7 +7,7 @@
             "command": "./mvnw",
             "args": [
                 // "clean",
-                "install"
+                "compile"
             ],
             "group": {
                 "kind": "build",
@@ -16,6 +16,28 @@
             "presentation": {
                 "reveal": "always",
                 "panel": "new"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/backend"
+            }
+        },
+        {
+            "label": "Compile Kotlin",
+            "type": "shell",
+            "command": "./mvnw",
+            "args": [
+                "compile"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "silent"
+            },
+            "runOptions": {
+                "runOn": "folderOpen"
             },
             "options": {
                 "cwd": "${workspaceFolder}/backend"
