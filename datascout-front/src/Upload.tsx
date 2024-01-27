@@ -19,6 +19,7 @@ const props: UploadProps = {
   action: "http://localhost:8080/upload",
   onChange(info) {
     const { status } = info.file;
+    console.log(info.file);
     if (status !== "uploading") {
       console.log(info.file, info.fileList);
     }
