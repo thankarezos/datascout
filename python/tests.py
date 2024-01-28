@@ -8,7 +8,7 @@ URI =         "https://media.discordapp.net/attachments/1079599772287127653/1191
 def test_uri():
     files = {
         'uri' :URI
-        }
+    }
 
     res = requests.post('http://localhost:3333/infer',data=files).text
     print(res)
@@ -23,7 +23,8 @@ def test_uri():
 def test_whitelist():
     files = {
         'whitelist' : ['couch'],
-        'uri' : URI }
+        'uri' : URI
+    }
 
     res = requests.post('http://localhost:3333/infer',data=files).text
     print(res)
@@ -40,7 +41,6 @@ def test_multi():
     files = {
         'whitelist' : ['couch','stop sign'],
         'uri' : [URI , STOP]
-
     }
         
     res = requests.post('http://localhost:3333/infer',data=files).text
