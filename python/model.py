@@ -132,15 +132,12 @@ async def root(file : Annotated[list[UploadFile],Form()] = None ,
             if len(f):
                 newpreds.append(f)
         pred = newpreds
-    print(pred)
     ret = [{ k : [to_bytes(v_) for v_ in v] for k,v  in p.items()} for p in pred]
     for i in range(len(ret)):
         ret[i]["labels"] = [Model.id2label(s) for s in ret[i]["labels"]]
 
     if len(ret) == 1:
         return ret[0]
-    elif len(ret) == 0:
-        return {}
     else:
         return ret 
 
