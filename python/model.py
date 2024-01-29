@@ -139,7 +139,7 @@ async def root(file : Annotated[list[UploadFile],Form()] = None ,
     if len(ret) == 1:
         return ret[0]
     else:
-        return ret 
+        return {"data":ret}
 
 if __name__ =='__main__':
     Model.load()
