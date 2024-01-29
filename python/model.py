@@ -137,7 +137,12 @@ async def root(file : Annotated[list[UploadFile],Form()] = None ,
     for i in range(len(ret)):
         ret[i]["labels"] = [Model.id2label(s) for s in ret[i]["labels"]]
 
-    return {"data":ret}
+    if len(ret) == 1:
+        return ret[0]
+    elif len(ret) == 0:
+        return {}
+    else:
+        return ret 
 
 if __name__ =='__main__':
     Model.load()
