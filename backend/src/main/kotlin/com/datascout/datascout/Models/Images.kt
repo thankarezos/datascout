@@ -17,7 +17,7 @@ data class Image(
         AttributeOverride(name = "label", column = Column(name = "label")),
         AttributeOverride(name = "count", column = Column(name = "count"))
     )
-    val labels: Set<Label> = HashSet()
+    val labels: Set<Label>? = null
 
 
 )
