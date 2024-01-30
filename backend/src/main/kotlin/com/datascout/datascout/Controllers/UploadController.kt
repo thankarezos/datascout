@@ -65,12 +65,25 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
         var labels = responseFromPython?.labels
 
         //find unique labels and their counts
-        if (labels != null) {
+
+
+        val labelSet = if (labels != null) {
             val uniqueLabels = labels.distinct()
             val labelsCopy = labels
             val counts = uniqueLabels.map { label -> labelsCopy.count { it == label } }
-            labels = uniqueLabels.zip(counts).map { (label, count) -> "$label ($count)" }
+            uniqueLabels.zip(counts).map { Label(it.first, it.second) }.toSet()
+        } else {
+            setOf()
         }
+
+        //save image to database
+        val image = Image(
+            userId = 1,
+            path = "path",
+            labels = labelSet
+        )
+
+        imageRepo.save(image)
 
 
         return ResponseEntity.ok(responseFromPython)
