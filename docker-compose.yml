@@ -11,7 +11,18 @@ services:
       POSTGRES_DB: datascout_db
     ports:
       - "9432:5432"
-    networks:
-      - reco
     profiles:
       - dev
+  pgadmin:
+    container_name: pgadmin4-datascout
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DISABLE_POSTFIX: "True"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+      PGADMIN_DEFAULT_EMAIL: "admin@admin.com"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+      PGADMIN_CONFIG_CONSOLE_LOG_LEVEL: "40"
+      GUNICORN_ACCESS_LOGFILE: '/dev/null'
+    ports:
+      - "50001:80"

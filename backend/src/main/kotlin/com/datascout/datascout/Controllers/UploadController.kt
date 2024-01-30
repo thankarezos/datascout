@@ -1,21 +1,20 @@
 package com.datascout.datascout.Controllers
 
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.multipart.MultipartFile
-import org.springframework.web.bind.annotation.RequestPart
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.http.ResponseEntity
+import com.datascout.datascout.models.Image
+import com.datascout.datascout.models.Label
+import com.datascout.datascout.repository.ImageRepository
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
-import org.springframework.http.HttpEntity
-import org.springframework.web.client.RestTemplate
+import org.springframework.http.ResponseEntity
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
-import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Bean
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.client.RestTemplate
+import org.springframework.web.multipart.MultipartFile
+
 
 data class JsonResponse(
     val scores: List<Double>? = null,
@@ -34,12 +33,7 @@ class RestTemplateConfig {
 
 @RestController
 @RequestMapping("/api")
-class UploadController(val restTemplate: RestTemplate) {
-
-    // @GetMapping("/helloWorld2")
-    // fun sayHello(): String {
-    //     return "Hello World!2"
-    // }
+class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepository) {
 
     @PostMapping("/upload", consumes = ["multipart/form-data"])
     fun uploadFile(@RequestParam("file") file: MultipartFile, @RequestParam("uri", required = false) uri: String?): ResponseEntity<JsonResponse>{
@@ -82,9 +76,27 @@ class UploadController(val restTemplate: RestTemplate) {
         return ResponseEntity.ok(responseFromPython)
     }
 
-    //return json success response
-    // @GetMapping("/test")
-    // fun test(): JsonResponse{
-    //     return JsonResponse(success = "true")
-    // }
+    @GetMapping("/images")
+    @ResponseBody
+    fun getAllImages(): Iterable<Image> {
+        // Method to handle GET requests to "/users"
+        return imageRepo.findAll()
+    }
+
+    @PostMapping("/images")
+    fun addImage(): Image {
+
+        var labels = setOf(
+            Label("label1", 1),
+            Label("label2", 2),
+            Label("label3", 3),
+        )
+
+        val image = Image(
+            userId = 1,
+            path = "path",
+            labels = labels
+        )
+        return imageRepo.save(image)
+    }
 }
