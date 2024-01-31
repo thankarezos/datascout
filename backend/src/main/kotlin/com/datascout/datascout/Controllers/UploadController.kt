@@ -3,6 +3,7 @@ package com.datascout.datascout.Controllers
 import com.datascout.datascout.models.Image
 import com.datascout.datascout.models.Label
 import com.datascout.datascout.repository.ImageRepository
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpEntity
@@ -14,6 +15,9 @@ import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.multipart.MultipartFile
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Paths
 
 
 data class JsonResponse(
@@ -37,34 +41,10 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
 
     @PostMapping("/upload", consumes = ["multipart/form-data"])
     fun uploadFile(@RequestParam("file") file: MultipartFile, @RequestParam("uri", required = false) uri: String?): ResponseEntity<JsonResponse>{
-        // if (file.isEmpty && uri.isNullOrBlank()){
-        //     return ResponseEntity.ok(JsonResponse(success = "false"))
-        // }
 
-        val pythonApiUrl = "http://0.0.0.0:3333/infer"
-        
-        // Set headers
-        val headers = HttpHeaders()
-        headers.contentType = MediaType.MULTIPART_FORM_DATA
+        val responseFromPython = infer(file)
 
-        // Prepare the body map
-        val body: MultiValueMap<String, Any> = LinkedMultiValueMap()
-        if (!file.isEmpty) {
-            body.add("file", file.resource)
-        }
-        uri?.let {
-            body.add("uri", it)
-        }
-
-        // Create HttpEntity with headers and body
-        val requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
-
-        // Execute the request
-        val responseFromPython = restTemplate.postForObject(pythonApiUrl, requestEntity, JsonResponse::class.java)
-
-        var labels = responseFromPython?.labels
-
-        //find unique labels and their counts
+        val labels = responseFromPython?.labels
 
 
         val labelSet = if (labels != null) {
@@ -84,6 +64,31 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
         )
 
         imageRepo.save(image)
+
+        val anntFile = annt(file, responseFromPython)
+
+
+
+        //save anntFile to storage
+
+        val directory = Paths.get("src/main/resources/static/images")
+        if (!Files.exists(directory)) {
+            Files.createDirectories(directory)
+        }
+
+        val fileExtension = file.originalFilename?.substringAfterLast('.', "") ?: ""
+
+        val filePath = directory.resolve("${image.id}.$fileExtension")
+
+        // Save the file
+        try {
+            anntFile?.inputStream()?.use { inputStream ->
+                Files.copy(inputStream, filePath)
+            }
+        } catch (e: IOException) {
+            throw RuntimeException("Failed to store file, error: $e")
+        }
+
 
 
         return ResponseEntity.ok(responseFromPython)
@@ -112,4 +117,51 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
         )
         return imageRepo.save(image)
     }
+
+    private fun infer(file: MultipartFile): JsonResponse?
+    {
+        val pythonApiUrl = "http://0.0.0.0:3333/infer"
+
+        // Set headers
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.MULTIPART_FORM_DATA
+
+        // Prepare the body map
+        val body: MultiValueMap<String, Any> = LinkedMultiValueMap()
+        if (!file.isEmpty) {
+            body.add("file", file.resource)
+        }
+
+
+        // Create HttpEntity with headers and body
+        val requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
+
+        // Execute the request
+        return restTemplate.postForObject(pythonApiUrl, requestEntity, JsonResponse::class.java)
+    }
+
+    private fun annt(file: MultipartFile, response: JsonResponse?): ByteArray?
+    {
+        val pythonApiUrl = "http://localhost:3333/annt"
+
+        // Set headers
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.MULTIPART_FORM_DATA
+
+
+        val mapper = jacksonObjectMapper()
+        val serializedResponse = mapper.writeValueAsString(response)
+        // Prepare the body map
+        val body: MultiValueMap<String, Any> = LinkedMultiValueMap()
+        if (!file.isEmpty) {
+            body.add("file", file.resource)
+        }
+        body.add("scores", serializedResponse)
+
+        val requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
+
+        return restTemplate.postForObject(pythonApiUrl, requestEntity, ByteArray::class.java)
+    }
 }
+
+
