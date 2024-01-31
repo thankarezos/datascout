@@ -49,21 +49,27 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
 
         val labelSet = if (labels != null) {
             val uniqueLabels = labels.distinct()
-            val labelsCopy = labels
-            val counts = uniqueLabels.map { label -> labelsCopy.count { it == label } }
+            val counts = uniqueLabels.map { label -> labels.count { it == label } }
             uniqueLabels.zip(counts).map { Label(it.first, it.second) }.toSet()
         } else {
             setOf()
         }
 
-        //save image to database
         val image = Image(
             userId = 1,
-            path = "path",
             labels = labelSet
         )
+        val fileExtension = "png"
+
+
+
+        val savedImage = imageRepo.save(image)
+
+        image.path = "${savedImage.id}.$fileExtension"
 
         imageRepo.save(image)
+        //save image to database
+
 
         val anntFile = annt(file, responseFromPython)
 
@@ -76,10 +82,9 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
             Files.createDirectories(directory)
         }
 
-        val fileExtension = file.originalFilename?.substringAfterLast('.', "") ?: ""
+
 
         val filePath = directory.resolve("${image.id}.$fileExtension")
-
         // Save the file
         try {
             anntFile?.inputStream()?.use { inputStream ->
