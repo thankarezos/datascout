@@ -109,7 +109,7 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
     @PostMapping("/images")
     fun addImage(): Image {
 
-        var labels = setOf(
+        val labels = setOf(
             Label("label1", 1),
             Label("label2", 2),
             Label("label3", 3),
