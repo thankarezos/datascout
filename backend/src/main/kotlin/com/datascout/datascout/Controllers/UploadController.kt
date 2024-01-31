@@ -3,6 +3,8 @@ package com.datascout.datascout.Controllers
 import com.datascout.datascout.models.Image
 import com.datascout.datascout.models.Label
 import com.datascout.datascout.repository.ImageRepository
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -26,6 +28,19 @@ data class JsonResponse(
     val boxes: List<List<Double>>? = null,
 )
 
+data class Response<T>(
+
+    val data: T? = null,
+    val error: String? = null,
+    val success: Boolean = true
+
+    
+) {
+    constructor(data: T?) : this(data, null)
+    constructor(error: String) : this(null, error, false)
+    constructor() : this(null, null, true)
+}
+
 @Configuration
 class RestTemplateConfig {
 
@@ -35,12 +50,24 @@ class RestTemplateConfig {
     }
 }
 
+@Configuration
+class JacksonConfig {
+
+    @Bean
+    fun objectMapper(): ObjectMapper {
+        // Customizing the Jackson ObjectMapper
+        return jacksonObjectMapper().apply {
+            setSerializationInclusion(JsonInclude.Include.NON_NULL) // Ignore null fields
+        }
+    }
+}
+
 @RestController
 @RequestMapping("/api")
 class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepository) {
 
     @PostMapping("/upload", consumes = ["multipart/form-data"])
-    fun uploadFile(@RequestParam("file") file: MultipartFile, @RequestParam("uri", required = false) uri: String?): ResponseEntity<JsonResponse>{
+    fun uploadFile(@RequestParam("file") file: MultipartFile, @RequestParam("uri", required = false) uri: String?): ResponseEntity<Response<JsonResponse>> {
 
         val responseFromPython = infer(file)
 
@@ -96,7 +123,7 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
 
 
 
-        return ResponseEntity.ok(responseFromPython)
+        return ResponseEntity.ok(Response())
     }
 
     @GetMapping("/images")
