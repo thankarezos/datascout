@@ -66,6 +66,8 @@ class JacksonConfig {
 @RequestMapping("/api")
 class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepository) {
 
+    private val fastApiUrl = "http://0.0.0.0:3333/"
+
     @PostMapping("/upload", consumes = ["multipart/form-data"])
     fun uploadFile(@RequestParam("file") file: MultipartFile, @RequestParam("uri", required = false) uri: String?): ResponseEntity<Response<JsonResponse>> {
 
@@ -152,7 +154,7 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
 
     private fun infer(file: MultipartFile): JsonResponse?
     {
-        val pythonApiUrl = "http://0.0.0.0:3333/infer"
+        val pythonApiUrl = fastApiUrl + "infer"
 
         // Set headers
         val headers = HttpHeaders()
@@ -174,7 +176,7 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
 
     private fun annt(file: MultipartFile, response: JsonResponse?): ByteArray?
     {
-        val pythonApiUrl = "http://localhost:3333/annt"
+        val pythonApiUrl = fastApiUrl + "annt"
 
         // Set headers
         val headers = HttpHeaders()
