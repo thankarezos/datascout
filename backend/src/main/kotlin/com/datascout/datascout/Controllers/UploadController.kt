@@ -1,8 +1,8 @@
-package com.datascout.datascout.Controllers
+package com.datascout.datascout.controllers
 
 import com.datascout.datascout.models.Image
 import com.datascout.datascout.models.Label
-import com.datascout.datascout.repository.ImageRepository
+import com.datascout.datascout.repositories.ImageRepository
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -111,16 +111,6 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
             Files.createDirectories(directory)
         }
 
-<<<<<<< HEAD
-        //val responseFromPython = restTemplate.postForObject(pythonApiUrl, data, JsonResponse::class.java)
-        // println(responseFromPython)
-
-        val responseFromPython: String? = restTemplate.postForObject(pythonApiUrl, data, String::class.java)
-        return ResponseEntity.ok(JsonResponse(success = responseFromPython ?: ""))
-        
-        //return ResponseEntity.ok(responseFromPython)
-        //return ResponseEntity.ok(JsonResponse(success = "responseFromPython"))
-=======
 
 
         val filePath = directory.resolve("${image.id}.$fileExtension")
@@ -136,7 +126,6 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
 
 
         return ResponseEntity.ok(Response())
->>>>>>> 8083e92080b26e0b266a38a68a2d69a6a4bf0e35
     }
 
     @GetMapping("/images")

@@ -1,5 +1,7 @@
+package com.datascout.datascout.repositories
+
 import org.springframework.stereotype.Repository
-import com.datascout.datascout.Models.Users // Assuming Users is the correct class
+import com.datascout.datascout.models.Users
 
 @Repository
 class UserRepository {
