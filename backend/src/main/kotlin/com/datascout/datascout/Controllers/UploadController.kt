@@ -1,8 +1,8 @@
-package com.datascout.datascout.Controllers
+package com.datascout.datascout.controllers
 
 import com.datascout.datascout.models.Image
 import com.datascout.datascout.models.Label
-import com.datascout.datascout.repository.ImageRepository
+import com.datascout.datascout.repositories.ImageRepository
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper

@@ -1,5 +1,5 @@
 
-package com.datascout.datascout.repository
+package com.datascout.datascout.repositories
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
