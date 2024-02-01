@@ -1,41 +1,41 @@
 import org.springframework.stereotype.Repository
+import com.datascout.datascout.Models.Users // Assuming Users is the correct class
 
 @Repository
 class UserRepository {
 
-    // This is to be replaces with database access
-    private val users: MutableList<User> = mutableListOf(
-        User(id = 1, username = "user1", password = "pass1"),
-        User(id = 2, username = "user2", password = "pass2")
+    // This is to be replaced with actual database access
+    private val users: MutableList<Users> = mutableListOf(
+        Users(id = 1, username = "user1", password = "pass1", email = "user1@example.com", phone = "1234567890"),
+        Users(id = 2, username = "user2", password = "pass2", email = "user2@example.com", phone = "9876543210")
     )
-    data class User(val id:Int, val username:String, val password:String)
-
 
     fun findUsernameByID(id: Int): String? {
         val user = users.find { it.id == id }
         return user?.username
     }
+
     fun findPasswordByID(id: Int): String? {
         val user = users.find { it.id == id }
         return user?.password
     }
+
     fun isLoginValid(usernameToCheck: String?, passwordToCheck: String?, usernameToLogin: String, passwordToLogin: String): Boolean {
         return usernameToCheck == usernameToLogin && passwordToCheck == passwordToLogin
     }
 
-    //This is not correct yet
-    fun save(user: User): User {
-        users[user.username] = user
+    // This is not correct yet
+    fun save(user: Users): Users {
+        users.add(user)
         return user
     }
 
-
-    fun registerUser(id: Int, username: String, password: String): Boolean {
-
-        if (users.any { it.username == username })
+    fun registerUser(id: Int, username: String, password: String, email: String, phone: String): Boolean {
+        if (users.any { it.username == username }) {
             return false // Username already exists
+        }
 
-        val newUser = User(id, username, password) //this will also need to be changed when the databse comes
+        val newUser = Users(id, username, password, email, phone)
         save(newUser)
 
         return true
