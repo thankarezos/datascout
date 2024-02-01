@@ -4,7 +4,7 @@ import axios from 'axios';
 interface UserData {
   username: string;
   password: string;
-  // Add more user data fields as needed
+  // TI STON PUTSO NA VALW GTPNM
 }
 
 interface AuthContextType {
@@ -18,21 +18,21 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {
   children: ReactNode;
-}
+}//ti einai kan auto kai giati xriazete
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<UserData | null>(null);
 
   const login = async (credentials: { username: string; password: string }) => {
     try {
-      // Replace the following URL with your actual login endpoint
+      //EIMAI AKSIOS
       const response = await axios.post('/login', credentials);
 
-      // Assuming the response contains user data upon successful login
+      // PWS KANW ASSERT GTPNGM
       setUser(response.data);
 
     } catch (error) {
-      // Handle login failure, e.g., show an error message
+      //den kserw kan an o aksios petaei exception se 4[..] code alla etsi moupe ena poulaki
       console.error('Login failed:', error);
       window.alert('karezo psf');
       throw new Error('Login failed');
@@ -41,13 +41,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (credentials: { username: string; password: string }) => {
     try {
-      // Replace the following URL with your actual register endpoint
+      
       await axios.post('/register', credentials);
-
-      // After successful registration, redirect to login
+      //auto login meta to register (?)
       await login(credentials);
+
     } catch (error) {
-      // Handle registration failure, e.g., show an error message
+      
       console.error('Registration failed:', error);
       window.alert('karezo psf')
       throw new Error('Registration failed');
@@ -56,6 +56,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = () => {
     window.alert('karezo psf')
+    //kodikas pou mporei na leei sto backend oti ekana logout les k exei simasia
     setUser(null);
   };
 
