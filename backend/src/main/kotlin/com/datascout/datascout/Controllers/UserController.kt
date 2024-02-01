@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.stereotype.Service
 import com.datascout.datascout.repositories.UserRepository
 import com.datascout.datascout.models.Users
+
+
 @RestController
 @RequestMapping("/api")
 class UserController(private val userRepository: UserRepository) {
