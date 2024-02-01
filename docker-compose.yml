@@ -11,8 +11,27 @@ services:
       POSTGRES_DB: datascout_db
     ports:
       - "9432:5432"
+    networks:
+      - datascout
+    profiles:
+      - db
+      - dev
+
+  fast-api:
+    container_name: datascout_fastapi
+    build:
+      dockerfile: Dockerfile
+      context: ./python
+    ports:
+      - "3333:3333"
+    volumes:
+      - ./python/app:/app
+    networks:
+      - datascout
     profiles:
       - dev
+
+
   pgadmin:
     container_name: pgadmin4-datascout
     image: dpage/pgadmin4
@@ -26,3 +45,8 @@ services:
       GUNICORN_ACCESS_LOGFILE: '/dev/null'
     ports:
       - "50001:80"
+    profiles:
+      - dev
+
+networks:
+  datascout:

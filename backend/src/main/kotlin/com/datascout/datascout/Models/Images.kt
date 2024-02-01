@@ -9,7 +9,7 @@ data class Image(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
     val userId: Long = 0,
-    val path: String? = null,
+    var path: String? = null,
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "image_labels", joinColumns = [JoinColumn(name = "image_id")])

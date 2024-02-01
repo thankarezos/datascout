@@ -76,12 +76,12 @@ def annotate(results :dict,image:Image) ->None:
           box = [round(i, 2) for i in box]
           draw.rectangle(box,outline='lightgreen',width=2)
           text = f"{label}: {round(score,3)*100}%"
-          font = ImageFont.truetype("arial.ttf", 13)
-          text_bbox = draw.textbbox((0, 0), text, font=font)
+        #   font = ImageFont.truetype("arial.ttf", 13)
+          text_bbox = draw.textbbox((0, 0), text)
           text_width, text_height = text_bbox[2] - text_bbox[0], text_bbox[3] - text_bbox[1]
           text_x = (box[0] + box[2] - text_width) // 2
           text_y = box[1] - text_height - 5 
-          draw.text((text_x, text_y), text, fill="#00ff00",font=font)   
+          draw.text((text_x, text_y), text, fill="#00ff00")   
 
 def test():
    url="https://media.discordapp.net/attachments/1079599772287127653/1191881082375770112/415059350_390596366697355_6342356019264221322_n.png?ex=65a70cc2&is=659497c2&hm=29163c39279e10fbae2a9a6a16e293e10cace0da51e8fe5eeb7527a7696f4554&=&format=webp&quality=lossless&width=475&height=594"
