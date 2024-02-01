@@ -37,11 +37,14 @@ class UploadController {
             mapOf("file" to file.bytes)
         }
 
-        val responseFromPython = restTemplate.postForObject(pythonApiUrl, data, JsonResponse::class.java)
+        //val responseFromPython = restTemplate.postForObject(pythonApiUrl, data, JsonResponse::class.java)
         // println(responseFromPython)
 
+        val responseFromPython: String? = restTemplate.postForObject(pythonApiUrl, data, String::class.java)
+        return ResponseEntity.ok(JsonResponse(success = responseFromPython ?: ""))
+        
         //return ResponseEntity.ok(responseFromPython)
-        return ResponseEntity.ok(JsonResponse(success = "responseFromPython"))
+        //return ResponseEntity.ok(JsonResponse(success = "responseFromPython"))
     }
 
     //return json success response
