@@ -111,16 +111,6 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
             Files.createDirectories(directory)
         }
 
-<<<<<<< HEAD
-        //val responseFromPython = restTemplate.postForObject(pythonApiUrl, data, JsonResponse::class.java)
-        // println(responseFromPython)
-
-        val responseFromPython: String? = restTemplate.postForObject(pythonApiUrl, data, String::class.java)
-        return ResponseEntity.ok(JsonResponse(success = responseFromPython ?: ""))
-        
-        //return ResponseEntity.ok(responseFromPython)
-        //return ResponseEntity.ok(JsonResponse(success = "responseFromPython"))
-=======
 
 
         val filePath = directory.resolve("${image.id}.$fileExtension")
@@ -136,7 +126,6 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
 
 
         return ResponseEntity.ok(Response())
->>>>>>> 8083e92080b26e0b266a38a68a2d69a6a4bf0e35
     }
 
     @GetMapping("/images")

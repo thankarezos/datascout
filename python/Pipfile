@@ -3,6 +3,11 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
+[[source]]
+url = "https://download.pytorch.org/whl/cpu"
+verify_ssl = false
+name = "pytorch"
+
 [packages]
 numpy = "*"
 transformers = "*"
@@ -10,10 +15,11 @@ fastapi = "*"
 pydantic = "*"
 pillow = "*"
 requests = "*"
-torch = "*"
+torch = {version="*", index="pytorch"}
 uvicorn = {extras = ["standard"] }
 timm = "*"
 python-multipart = "*"
+torchvision = {version="*", index="pytorch"}
 
 [dev-packages]
 
