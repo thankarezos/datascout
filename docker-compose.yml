@@ -47,6 +47,8 @@ services:
       - "50001:80"
     profiles:
       - dev
+    networks:
+      - datascout
 
 networks:
   datascout:

@@ -1,17 +1,15 @@
 package com.datascout.datascout.models
 
+import jakarta.persistence.*
 
+
+@Entity
+@Table(name = "users")
 data class Users(
-    val id: Int?,
-    val username: String,
-    val password: String,
-    val email: String,
-    val phone: String,
-    val token: String
-)
-
-
-data class UsersDto(
-    val username: String,
-    val password: String
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Int = 0,
+    val username: String = "",
+    val password: String = "",
+    val email: String = "",
+    val token: String = ""
 )

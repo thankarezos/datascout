@@ -1,18 +1,17 @@
 package com.datascout.datascout.controllers
 
+import com.datascout.datascout.dto.RegisterDto
+import com.datascout.datascout.dto.UsersDto
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.stereotype.Service
-import com.datascout.datascout.repositories.UserRepository
-import com.datascout.datascout.models.Users
-
+import com.datascout.datascout.service.UserService
 
 @RestController
 @RequestMapping("/api")
-class UserController(private val userRepository: UserRepository) {
+class UserController(private val userService: UserService) {
 
     @PostMapping("/login")
     fun login(@RequestBody loginRequest: UsersDto): ResponseEntity<String> {
@@ -20,33 +19,26 @@ class UserController(private val userRepository: UserRepository) {
         val usernameToLogin = loginRequest.username
         val passwordToLogin = loginRequest.password
 
-        var ID = 1 //temp
-        val usernameToCheck = userRepository.findUsernameByID(ID)?
-        val passwordToCheck = userRepository.findPasswordByID(ID)?
+        val user = userService.findUserByUserNameAndPassword(usernameToLogin, passwordToLogin)
 
-        return if (userRepository.isLoginValid(usernameToCheck, passwordToCheck, usernameToLogin, passwordToLogin)) {
-            ResponseEntity.ok("Login successful")
-        } else {
+        return if (user == null) {
             ResponseEntity.status(401).body("Invalid username or password")
+        } else {
+            ResponseEntity.ok(user.token)
         }
     }    
 
     @PostMapping("/register")
-    fun register(@RequestBody registrationRequest: Users): ResponseEntity<String> {
+    fun register(@RequestBody registrationRequest: RegisterDto): ResponseEntity<String> {
 
-        val ID = 1 //temp
         val username = registrationRequest.username
         val password = registrationRequest.password
         val email = registrationRequest.email
-        val phone = registrationRequest.phone
 
-        return if (userRepository.registerUser(ID, username, password, email, phone)) {
+        return if (userService.registerUser(username, password, email)) {
             ResponseEntity.ok("Registration successful")
         } else {
             ResponseEntity.status(400).body("Username already exists")
         }
     }
-
-    data class LoginRequest(val username: String, val password: String)
-    data class RegistrationRequest(val username: String, val password: String)
 }

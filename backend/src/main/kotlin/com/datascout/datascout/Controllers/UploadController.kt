@@ -1,5 +1,6 @@
 package com.datascout.datascout.controllers
 
+import com.datascout.datascout.dto.Response
 import com.datascout.datascout.models.Image
 import com.datascout.datascout.models.Label
 import com.datascout.datascout.repositories.ImageRepository
@@ -28,18 +29,7 @@ data class JsonResponse(
     val boxes: List<List<Double>>? = null,
 )
 
-data class Response<T>(
 
-    val data: T? = null,
-    val error: String? = null,
-    val success: Boolean = true
-
-    
-) {
-    constructor(data: T?) : this(data, null)
-    constructor(error: String) : this(null, error, false)
-    constructor() : this(null, null, true)
-}
 
 @Configuration
 class RestTemplateConfig {
@@ -75,7 +65,6 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
 
         val labels = responseFromPython?.labels
 
-
         val labelSet = if (labels != null) {
             val uniqueLabels = labels.distinct()
             val counts = uniqueLabels.map { label -> labels.count { it == label } }
@@ -88,6 +77,7 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
             userId = 1,
             labels = labelSet
         )
+
         val fileExtension = "png"
 
 
