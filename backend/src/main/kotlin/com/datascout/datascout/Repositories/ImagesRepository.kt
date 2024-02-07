@@ -10,4 +10,5 @@ import com.datascout.datascout.models.Image
 @Repository
 interface ImageRepository : JpaRepository<Image, Long> {
     fun findAllByUserId(userId: Long): List<Image>
+    fun findAllByUserIdAndId(userId: Long, id: Long): Image?
 }

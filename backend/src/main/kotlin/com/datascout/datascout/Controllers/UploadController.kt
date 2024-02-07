@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.*
 
 data class JsonResponse(
     val scores: List<Double>? = null,
@@ -104,7 +105,7 @@ class UploadController(
 
         imageRepo.save(image)
 
-        val originalDirectory = Paths.get("storage/images/original")
+        val originalDirectory = Paths.get(originalImagesPath)
         if (!Files.exists(originalDirectory)) {
             Files.createDirectories(originalDirectory)
         }
@@ -126,7 +127,7 @@ class UploadController(
 
         //save anntFile to storage
 
-        val directory = Paths.get("storage/images/annotated")
+        val directory = Paths.get(annotatedImagesPath)
         if (!Files.exists(directory)) {
             Files.createDirectories(directory)
         }
@@ -163,17 +164,55 @@ class UploadController(
         val images = imageRepo.findAllByUserId(userId)
         //add the path to the images
         val imagesDto = images.map {
-            val originalPath = originalImagesPath + it.path
-            val annotatedPath = annotatedImagesPath + it.path
             ImageDto(
                     id = it.id,
                     userId = it.userId,
-                    originalPath = originalPath,
-                    path = annotatedPath,
+                    path = it.path,
                     labels = it.labels?.map { label -> com.datascout.datascout.dto.LabelDto(label.label, label.count) }?.toSet()
             )
         }
         return ResponseEntity.ok(Response(data = imagesDto))
+    }
+
+    @GetMapping("/image/{id}/annotated={annotated}")
+    @ResponseBody
+    fun getImageFile(request: HttpServletRequest,
+                        @PathVariable("id") id: Long,
+                     @PathVariable("annotated") annotated: Boolean = false
+
+    ): ResponseEntity<ByteArray> {
+        val jwt = request.cookies?.firstOrNull { it.name == "jwt" }?.value
+        if (jwt == null) {
+            return ResponseEntity.status(401).body(ByteArray(0))
+        }
+        val userId = jwtUtil.validateAndExtractUserId(jwt)
+                ?: return ResponseEntity.status(401).body(ByteArray(0))
+        // Method to handle GET requests to "/users"
+        val image = imageRepo.findById(id).orElse(null) ?: return ResponseEntity.notFound().build()
+
+        if (image.userId != userId) {
+            return ResponseEntity.status(401).body(ByteArray(0))
+        }
+
+        val filePath = if (annotated) {
+            Paths.get(annotatedImagesPath, image.path)
+        } else {
+            Paths.get(originalImagesPath, image.path)
+        }
+
+        val fileBytes: ByteArray = try {
+            Files.readAllBytes(filePath)
+        } catch (e: IOException) {
+            // Handle the case where the file can't be read (e.g., file not found)
+            return ResponseEntity.notFound().build()
+        }
+
+        // Return the image with the correct content type
+        return ResponseEntity.ok()
+            .contentType(MediaType.IMAGE_PNG) // Set the content type to image/png
+            .body(fileBytes)
+
+
     }
 
     private fun infer(file: MultipartFile): JsonResponse?

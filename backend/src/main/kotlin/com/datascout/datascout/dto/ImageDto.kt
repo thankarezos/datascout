@@ -5,7 +5,6 @@ import jakarta.persistence.*
 data class ImageDto(
     val id: Long,
     val userId: Long,
-    val originalPath: String?,
     val path: String?,
     val labels: Set<LabelDto>?
 )
