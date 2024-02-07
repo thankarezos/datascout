@@ -9,5 +9,5 @@ import com.datascout.datascout.models.Image
 
 @Repository
 interface ImageRepository : JpaRepository<Image, Long> {
-    // Basic CRUD methods are inherited
+    fun findAllByUserId(userId: Long): List<Image>
 }

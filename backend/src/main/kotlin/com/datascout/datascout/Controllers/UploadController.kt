@@ -1,5 +1,6 @@
 package com.datascout.datascout.controllers
 
+import com.datascout.datascout.dto.ImageDto
 import com.datascout.datascout.dto.Response
 import com.datascout.datascout.models.Image
 import com.datascout.datascout.models.Label
@@ -21,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
-
+import org.springframework.beans.factory.annotation.Value
 
 data class JsonResponse(
     val scores: List<Double>? = null,
@@ -54,12 +55,16 @@ class JacksonConfig {
 
 @RestController
 @RequestMapping("/api")
-class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepository) {
-
-    private val fastApiUrl = "http://0.0.0.0:3333/"
+class UploadController(
+        val restTemplate: RestTemplate,
+        val imageRepo: ImageRepository,
+        @Value("\${fastapi.url}") private val fastApiUrl: String,
+        @Value("\${storage.original.path}") private val originalImagesPath: String,
+        @Value("\${storage.annotated.path}") private val annotatedImagesPath: String
+) {
 
     @PostMapping("/upload", consumes = ["multipart/form-data"])
-    fun uploadFile(@RequestParam("file") file: MultipartFile, @RequestParam("uri", required = false) uri: String?): ResponseEntity<Response<JsonResponse>> {
+    fun uploadFile(@RequestParam("file") file: MultipartFile, @RequestParam("uri", required = false) uri: String?, @RequestParam("userId") userId: Long): ResponseEntity<Response<JsonResponse>> {
 
         val responseFromPython = infer(file)
 
@@ -74,7 +79,7 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
         }
 
         val image = Image(
-            userId = 1,
+            userId = userId,
             labels = labelSet
         )
 
@@ -87,7 +92,21 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
         image.path = "${savedImage.id}.$fileExtension"
 
         imageRepo.save(image)
-        //save image to database
+        //save original file to storage
+        val originalDirectory = Paths.get("storage/images/original")
+        if (!Files.exists(originalDirectory)) {
+            Files.createDirectories(originalDirectory)
+        }
+
+        val originalFilePath = originalDirectory.resolve("${image.id}.$fileExtension")
+
+        try {
+            file.inputStream.use { inputStream ->
+                Files.copy(inputStream, originalFilePath)
+            }
+        } catch (e: IOException) {
+            throw RuntimeException("Failed to store file, error: $e")
+        }
 
 
         val anntFile = annt(file, responseFromPython)
@@ -96,7 +115,7 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
 
         //save anntFile to storage
 
-        val directory = Paths.get("src/main/resources/static/images")
+        val directory = Paths.get("storage/images/annotated")
         if (!Files.exists(directory)) {
             Files.createDirectories(directory)
         }
@@ -114,15 +133,47 @@ class UploadController(val restTemplate: RestTemplate, val imageRepo: ImageRepos
         }
 
 
-
         return ResponseEntity.ok(Response())
     }
 
     @GetMapping("/images")
     @ResponseBody
-    fun getAllImages(): Iterable<Image> {
+    fun getAllImages(): Iterable<ImageDto> {
         // Method to handle GET requests to "/users"
-        return imageRepo.findAll()
+        val images = imageRepo.findAll()
+        //add the path to the images
+        val imagesDto = images.map { image ->
+            val originalPath = originalImagesPath + image.path
+            val annotatedPath = annotatedImagesPath + image.path
+            ImageDto(
+                id = image.id,
+                userId = image.userId,
+                originalPath = originalPath,
+                path = annotatedPath,
+                labels = image.labels?.map { label -> com.datascout.datascout.dto.LabelDto(label.label, label.count) }?.toSet()
+            )
+        }
+        return imagesDto
+    }
+
+    @GetMapping("/images/{userId}")
+    @ResponseBody
+    fun getImage(@PathVariable userId: Long): Iterable<ImageDto?> {
+        // Method to handle GET requests to "/users"
+        val images = imageRepo.findAllByUserId(userId)
+        //add the path to the images
+        val imagesDto = images.map {
+            val originalPath = originalImagesPath + it.path
+            val annotatedPath = annotatedImagesPath + it.path
+            ImageDto(
+                    id = it.id,
+                    userId = it.userId,
+                    originalPath = originalPath,
+                    path = annotatedPath,
+                    labels = it.labels?.map { label -> com.datascout.datascout.dto.LabelDto(label.label, label.count) }?.toSet()
+            )
+        }
+        return imagesDto
     }
 
     @PostMapping("/images")
