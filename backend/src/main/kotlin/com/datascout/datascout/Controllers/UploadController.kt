@@ -178,7 +178,8 @@ class UploadController(
 
     private fun infer(file: MultipartFile): JsonResponse?
     {
-        val pythonApiUrl = fastApiUrl + "infer"
+        val pythonApiUrl = "${fastApiUrl.trimEnd('/')}/infer"
+
 
         // Set headers
         val headers = HttpHeaders()
@@ -200,7 +201,8 @@ class UploadController(
 
     private fun annt(file: MultipartFile, response: JsonResponse?): ByteArray?
     {
-        val pythonApiUrl = fastApiUrl + "annt"
+        val pythonApiUrl = "${fastApiUrl.trimEnd('/')}/annt"
+
 
         // Set headers
         val headers = HttpHeaders()

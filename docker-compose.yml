@@ -31,6 +31,35 @@ services:
     profiles:
       - dev
 
+  nginx:
+    container_name: datascout_nginx
+    image: nginx:1.21.3
+    ports:
+      - "80:80"
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d
+    networks:
+      - datascout
+    profiles:
+      - dev
+
+  spring-boot:
+    container_name: datascout_spring-boot
+    build:
+      dockerfile: Dockerfile
+      context: ./backend
+    ports:
+      - "8081:8080"
+    # volumes:
+    #   - ./backend:/app/src
+    environment:
+      DATASOURCE_URL: "jdbc:postgresql://db:5432/datascout_db"
+      FASTAPI_URL: "http://fast-api:3333"
+    networks:
+      - datascout
+    profiles:
+      - dev
+
 
   pgadmin:
     container_name: pgadmin4-datascout

@@ -142,4 +142,4 @@ async def root(file : Annotated[list[UploadFile],Form()] = None ,
 
 if __name__ =='__main__':
     Model.load()
-    uvicorn.run(app,host="0.0.0.0", port=3333)
+    uvicorn.run(app, host="0.0.0.0", port=3333)
