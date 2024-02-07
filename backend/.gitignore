@@ -29,7 +29,8 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-**/static/images/*
+**/storage/images/annotated/*
+**/storage/images/original/*
 
 ### VS Code ###
 .vscode/*
