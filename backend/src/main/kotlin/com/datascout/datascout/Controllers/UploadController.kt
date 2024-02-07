@@ -103,7 +103,7 @@ class UploadController(
         image.path = "${savedImage.id}.$fileExtension"
 
         imageRepo.save(image)
-        //save original file to storage
+
         val originalDirectory = Paths.get("storage/images/original")
         if (!Files.exists(originalDirectory)) {
             Files.createDirectories(originalDirectory)
@@ -147,29 +147,18 @@ class UploadController(
         return ResponseEntity.ok(Response())
     }
 
+
     @GetMapping("/images")
     @ResponseBody
-    fun getAllImages(): Iterable<ImageDto> {
-        // Method to handle GET requests to "/users"
-        val images = imageRepo.findAll()
-        //add the path to the images
-        val imagesDto = images.map { image ->
-            val originalPath = originalImagesPath + image.path
-            val annotatedPath = annotatedImagesPath + image.path
-            ImageDto(
-                id = image.id,
-                userId = image.userId,
-                originalPath = originalPath,
-                path = annotatedPath,
-                labels = image.labels?.map { label -> com.datascout.datascout.dto.LabelDto(label.label, label.count) }?.toSet()
-            )
-        }
-        return imagesDto
-    }
+    fun getImage(request: HttpServletRequest
+    ): ResponseEntity<Response<List<ImageDto>>> {
 
-    @GetMapping("/images/{userId}")
-    @ResponseBody
-    fun getImage(@PathVariable userId: Long): Iterable<ImageDto?> {
+        val jwt = request.cookies?.firstOrNull { it.name == "jwt" }?.value
+        if (jwt == null) {
+            return ResponseEntity.status(401).body(Response(error = "Unauthorized"))
+        }
+        val userId = jwtUtil.validateAndExtractUserId(jwt)
+                ?: return ResponseEntity.status(401).body(Response(error = "Unauthorized"))
         // Method to handle GET requests to "/users"
         val images = imageRepo.findAllByUserId(userId)
         //add the path to the images
@@ -184,24 +173,7 @@ class UploadController(
                     labels = it.labels?.map { label -> com.datascout.datascout.dto.LabelDto(label.label, label.count) }?.toSet()
             )
         }
-        return imagesDto
-    }
-
-    @PostMapping("/images")
-    fun addImage(): Image {
-
-        val labels = setOf(
-            Label("label1", 1),
-            Label("label2", 2),
-            Label("label3", 3),
-        )
-
-        val image = Image(
-            userId = 1,
-            path = "path",
-            labels = labels
-        )
-        return imageRepo.save(image)
+        return ResponseEntity.ok(Response(data = imagesDto))
     }
 
     private fun infer(file: MultipartFile): JsonResponse?

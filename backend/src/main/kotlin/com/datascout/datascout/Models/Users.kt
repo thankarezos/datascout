@@ -11,5 +11,4 @@ data class Users(
     val username: String = "",
     val password: String = "",
     val email: String = "",
-    val token: String = ""
 )
