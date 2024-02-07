@@ -1,11 +1,9 @@
 package com.datascout.datascout.service
 
 import com.datascout.datascout.Repositories.UserRepository
-import org.springframework.stereotype.Repository
 import com.datascout.datascout.models.Users
-import com.datascout.datascout.repositories.ImageRepository
 import org.springframework.stereotype.Service
-import java.util.UUID
+import java.util.*
 
 
 @Service
@@ -28,7 +26,7 @@ class UserService(val userRepo: UserRepository) {
     }
 
     fun findUserByUserNameAndPassword(username: String, password: String): Users? {
-        return users.find { it.username == username && it.password == password }
+        return userRepo.findByUsernameAndPassword(username, password)
     }
 
     fun isLoginValid(usernameToCheck: String?, passwordToCheck: String?, usernameToLogin: String, passwordToLogin: String): Boolean {
@@ -42,10 +40,9 @@ class UserService(val userRepo: UserRepository) {
 
         val token = UUID.randomUUID().toString()
 
-        if (users.any { it.username == username }) {
-            return false // Username already exists
+        if(userRepo.findByUsername(username) != null) {
+            return false
         }
-
         val newUser = Users(
             username = username,
             password = password,

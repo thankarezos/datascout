@@ -1,5 +1,6 @@
 package com.datascout.datascout.controllers
 
+import com.datascout.datascout.JwtUtil
 import com.datascout.datascout.dto.ImageDto
 import com.datascout.datascout.dto.Response
 import com.datascout.datascout.models.Image
@@ -8,6 +9,8 @@ import com.datascout.datascout.repositories.ImageRepository
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import jakarta.servlet.http.HttpServletRequest
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpEntity
@@ -22,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
-import org.springframework.beans.factory.annotation.Value
 
 data class JsonResponse(
     val scores: List<Double>? = null,
@@ -60,12 +62,21 @@ class UploadController(
         val imageRepo: ImageRepository,
         @Value("\${fastapi.url}") private val fastApiUrl: String,
         @Value("\${storage.original.path}") private val originalImagesPath: String,
-        @Value("\${storage.annotated.path}") private val annotatedImagesPath: String
+        @Value("\${storage.annotated.path}") private val annotatedImagesPath: String,
+        private val jwtUtil: JwtUtil
 ) {
 
     @PostMapping("/upload", consumes = ["multipart/form-data"])
-    fun uploadFile(@RequestParam("file") file: MultipartFile, @RequestParam("uri", required = false) uri: String?, @RequestParam("userId") userId: Long): ResponseEntity<Response<JsonResponse>> {
-
+    fun uploadFile(@RequestParam("file") file: MultipartFile,
+                   @RequestParam("uri", required = false) uri: String?,
+                   request: HttpServletRequest
+    ): ResponseEntity<Response<JsonResponse>> {
+        val jwt = request.cookies?.firstOrNull { it.name == "jwt" }?.value
+        if (jwt == null) {
+            return ResponseEntity.status(401).body(Response(error = "Unauthorized"))
+        }
+        val userId = jwtUtil.validateAndExtractUserId(jwt)
+                ?: return ResponseEntity.status(401).body(Response(error = "Unauthorized"))
         val responseFromPython = infer(file)
 
         val labels = responseFromPython?.labels
