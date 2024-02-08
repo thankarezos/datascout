@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 data class tokenResponse(
-    val token: String
+    val token: String,
+    val userId: Int
 )
 
 @RestController
@@ -36,13 +37,14 @@ class UserController(private val userService: UserService, private val jwtUtil: 
         }
         else {
             val token = jwtUtil.generateToken(user.id.toString())
+            val userId = user.id
             val cookie = Cookie("jwt", token)
             cookie.path = "/"
             cookie.isHttpOnly = true
             response.addCookie(cookie)
-            return ResponseEntity.ok(Response( tokenResponse(token)))
+            return ResponseEntity.ok(Response( tokenResponse(token, userId)))
         }
-    }    
+    }
 
     @PostMapping("/register")
     fun register(@RequestBody registrationRequest: RegisterDto): ResponseEntity<String> {

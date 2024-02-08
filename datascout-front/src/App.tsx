@@ -1,29 +1,21 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
-import UploadPage from './Upload';
-import AuthPage from './AuthPage';
-import { AuthProvider, useAuth } from './AuthContext';
+// import UploadPage from './Upload';
+import NormalLoginForm from './Login';
+import PicturesWall from './Page';
 
-const PrivateRoute: React.FC = ({ children }) => {
-  const { user } = useAuth();
-
-  return user ? <>{children}</> : <Redirect to="/login" />;
-};
+// import AuthPage from './AuthPage';
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
       <Router>
-        <Switch>
-          <Route path="/auth" component={AuthPage} />
-          <PrivateRoute>
-            <Route path="/upload" component={UploadPage} />
-          </PrivateRoute>
-          <Redirect from="/" to="/upload" />
-        </Switch>
+        <Routes>
+          <Route path="/auth" element={<NormalLoginForm />} />
+          <Route path="/" element={<PicturesWall />} />
+          {/* <Route path="/upload" component={UploadPage} /> */}
+        </Routes>
       </Router>
-    </AuthProvider>
   );
 };
 
