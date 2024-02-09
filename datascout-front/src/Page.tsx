@@ -80,7 +80,7 @@ const PicturesWall: React.FC = () => {
                 })
                 .catch(error => {
                     if (error.response.status === 401) {
-                        navigate("/auth");
+                        navigate("/login");
                     }
                     console.log(error);
 

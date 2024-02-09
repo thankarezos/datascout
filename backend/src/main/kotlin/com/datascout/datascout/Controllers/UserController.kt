@@ -56,6 +56,11 @@ class UserController(
         val username = registrationRequest.username
         val password = registrationRequest.password
         val email = registrationRequest.email
+        val confirm = registrationRequest.confirm
+
+        if(password != confirm) {
+            return ResponseEntity.status(401).body(Response("Passwords do not match"))
+        }
 
         if(userRepository.findByUsername(username) != null) {
             return ResponseEntity.status(401).body(Response("Username already exists"))
