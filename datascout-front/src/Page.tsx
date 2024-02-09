@@ -108,13 +108,9 @@ const PicturesWall: React.FC = () => {
 
     const handleCancel = () => setPreviewVisible(false);
 
-    const handlePreview = async (file: UploadFile<unknown>) => {
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj as Blob);
-        }
-
-        // Assuming `file.url` is the path to the non-annotated image
-        setPreviewImage(file.url || file.preview);
+    const handlePreview = async (file: UploadFile<unknown> & { labels?: Label[] }) => {
+        const preview = file.url || (await getBase64(file.originFileObj as Blob)) || '';
+        setPreviewImage(preview);
         console.log(file.labels);
 
         // Construct the URL for the annotated image. Adjust according to your API.
@@ -129,7 +125,7 @@ const PicturesWall: React.FC = () => {
         setPreviewVisible(true);
     };
 
-    const deleteImage = async (fileId: number) => {
+    const deleteImage = async (fileId: string) => {
         await axios.post(`/api/image/${fileId}`);
     };
 
@@ -139,7 +135,7 @@ const PicturesWall: React.FC = () => {
         // If the file was removed, call the delete function
         if (file.status === 'removed') {
             // Call the deleteImage function and wait for the promise
-            deleteImage(file.uid as number) // Assuming the file.uid is the image id, cast as number if needed
+            deleteImage(file.uid)
                 .then(() => {
                     // If delete is successful, update the fileList state to exclude the deleted file
                     console.log("Image deleted");
@@ -180,7 +176,7 @@ const PicturesWall: React.FC = () => {
                     >
                         {uploadButton}
                     </Upload>
-                    <Modal visible={previewVisible} footer={null} onCancel={handleCancel} width="80%">
+                    <Modal open={previewVisible} footer={null} onCancel={handleCancel} width="80%">
                         <div className="preview-image-container">
                             <div className="preview-image">
                                 <img alt="Non-Annotated example" style={{ width: "100%" }} src={previewImage} />

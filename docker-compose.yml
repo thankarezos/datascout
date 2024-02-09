@@ -2,6 +2,7 @@ version: '3.7'
 
 services:
 
+
   db:
     container_name: datascout_db
     image: "postgres:14.2"
@@ -16,6 +17,7 @@ services:
     profiles:
       - db
       - dev
+      - deploy
 
   fast-api:
     container_name: datascout_fastapi
@@ -30,10 +32,13 @@ services:
       - datascout
     profiles:
       - dev
+      - deploy
 
   nginx:
     container_name: datascout_nginx
-    image: nginx:1.21.3
+    build:
+      dockerfile: Dockerfile
+      context: ./datascout-front
     ports:
       - "80:80"
     volumes:
@@ -42,7 +47,8 @@ services:
     networks:
       - datascout
     profiles:
-      - dev
+      - deploy
+      - nginx
 
   spring-boot:
     container_name: datascout_spring-boot
@@ -59,7 +65,7 @@ services:
     networks:
       - datascout
     profiles:
-      - dev
+      - deploy
 
 
   pgadmin:
