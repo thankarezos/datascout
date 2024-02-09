@@ -48,7 +48,6 @@ services:
       - datascout
     profiles:
       - deploy
-      - nginx
 
   spring-boot:
     container_name: datascout_spring-boot
