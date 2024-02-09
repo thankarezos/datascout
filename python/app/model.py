@@ -27,10 +27,10 @@ class Model:
     @staticmethod
     def load() -> None:
         if Model.__processor is None:
-          Model.__processor = DetrImageProcessor.from_pretrained("facebook/detr-resnet-50",max_size=None)
+          Model.__processor = DetrImageProcessor.from_pretrained("facebook/detr-resnet-50",
+                                                                 size = {"shortest_edge": 800, "longest_edge": 9333})
         if Model.__model is None:
          Model.__model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50")
-         Model.__model.max_size = None
          
 
     @staticmethod
