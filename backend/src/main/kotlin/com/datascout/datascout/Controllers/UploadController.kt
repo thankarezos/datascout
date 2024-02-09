@@ -258,10 +258,27 @@ class UploadController(
         val headers = HttpHeaders()
         headers.contentType = MediaType.MULTIPART_FORM_DATA
 
+        val items = listOf(
+            "stop sign",
+            "cat",
+            "cell phone",
+            "remote",
+            "traffic light",
+            "car",
+            "person",
+            "bicycle",
+            "motorcycle",
+            "truck",
+            "bus"
+        )
+
+        val commaSeperatedItems = items.joinToString(",")
+
         // Prepare the body map
         val body: MultiValueMap<String, Any> = LinkedMultiValueMap()
         if (!file.isEmpty) {
             body.add("file", file.resource)
+            body.add("whitelist", commaSeperatedItems)
         }
 
 
