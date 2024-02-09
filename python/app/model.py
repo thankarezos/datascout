@@ -114,7 +114,7 @@ async def antt(scores: Annotated[str, Form()],file: Annotated[UploadFile, Form()
    
     if file is not None:
      contents = await file.read()
-     image = Image.open(io.BytesIO(contents))
+     image = Image.open(io.BytesIO(contents)).convert('RGB')
     else :
         assert uri is not None
         image = from_url(uri)
@@ -130,7 +130,7 @@ async def root(file : Annotated[list[UploadFile],Form()] = None ,
     if file is not None:
      for f in file:
         contents = await f.read()
-        image = Image.open(io.BytesIO(contents))
+        image = Image.open(io.BytesIO(contents)).convert('RGB')
         images.append(image)
 
     if uri:
