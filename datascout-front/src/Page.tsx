@@ -34,7 +34,16 @@ async function getBase64(file: Blob) {
 }
 
 
+const logout = () => {
+    // Remove JWT from local storage
+    localStorage.removeItem('jwt'); // Change 'jwtToken' to the key you used to store the JWT
+    // Redirect to the login page or perform any other necessary action
+    // For example, you can use React Router to navigate to the login page
+    // Example using React Router:
+    window.location.href = '/login'; // Redirect to the login page
+  };
 
+  
 const PicturesWall: React.FC = () => {
     const [previewVisible, setPreviewVisible] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
@@ -156,6 +165,7 @@ const PicturesWall: React.FC = () => {
 
     return (
         <>
+            <Button type="primary" onClick={logout}></Button>
             <Form layout="vertical" className="image-upload-form">
                 <Form.Item className="image-upload-form-item">
                     <Upload
