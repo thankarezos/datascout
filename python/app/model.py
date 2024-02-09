@@ -27,9 +27,11 @@ class Model:
     @staticmethod
     def load() -> None:
         if Model.__processor is None:
-          Model.__processor = DetrImageProcessor.from_pretrained("facebook/detr-resnet-50")
+          Model.__processor = DetrImageProcessor.from_pretrained("facebook/detr-resnet-50",max_size=None)
         if Model.__model is None:
          Model.__model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50")
+         Model.__model.max_size = None
+         
 
     @staticmethod
     def predict(image) -> dict:
@@ -86,7 +88,7 @@ def annotate(results :dict,image:Image) ->None:
        draw = ImageDraw.Draw(image)
        for score, label, box in zip(results["scores"], results["labels"], results["boxes"]):
           box = [round(i, 2) for i in box]
-          draw.rectangle(box,outline='lightgreen',width=2)
+          draw.rectangle(box,outline='lightgreen')
           text = f"{label}: {(score*100):.2f}%"
           text_bbox = draw.textbbox((0, 0), text)
           text_width, text_height = text_bbox[2] - text_bbox[0], text_bbox[3] - text_bbox[1]
@@ -118,8 +120,9 @@ async def antt(scores: Annotated[str, Form()],file: Annotated[UploadFile, Form()
     else :
         assert uri is not None
         image = from_url(uri)
-    scores = json.loads(scores)
-    annotate(dict(scores),image)
+    if scores:
+      scores = json.loads(scores)
+      annotate(dict(scores),image)
     return StreamingResponse( io.BytesIO(dump_bytes(image)) , media_type="image/png")
 
 @app.post("/infer")
