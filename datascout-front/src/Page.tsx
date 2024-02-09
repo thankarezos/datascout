@@ -77,11 +77,7 @@ const PicturesWall: React.FC = () => {
                 
             });
         };
-        // //check if any file status is not uploading
-        // if (fileList.some(file => file.status !== "uploading")) {
-        //     console.log("fileList", fileList);
-            
-        // }
+        
         if (!loading) {
             getImages();
         }
@@ -150,12 +146,6 @@ const PicturesWall: React.FC = () => {
             setFileList(fileList);
         }
     };
-    
-    
-
-
-
- 
 
     const uploadButton = (
         <div>
