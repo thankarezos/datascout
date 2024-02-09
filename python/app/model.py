@@ -70,16 +70,30 @@ def filter(results : dict , whitelist : set = None) -> dict:
             
     return out if any_ else {}
 
+def clamp_coordinates(x, y, width, height):
+    if x < 0:
+        x = 0
+    elif x >= width:
+        x = width - 1
+    if y < 0:
+        y = 0
+    elif y >= height:
+        y = height - 1
+
+    return x, y
+
 def annotate(results :dict,image:Image) ->None:
        draw = ImageDraw.Draw(image)
        for score, label, box in zip(results["scores"], results["labels"], results["boxes"]):
           box = [round(i, 2) for i in box]
           draw.rectangle(box,outline='lightgreen',width=2)
-          text = f"{label}: {round(score,3)*100}%"
+          text = f"{label}: {(score*100):.2f}%"
           text_bbox = draw.textbbox((0, 0), text)
           text_width, text_height = text_bbox[2] - text_bbox[0], text_bbox[3] - text_bbox[1]
           text_x = (box[0] + box[2] - text_width) // 2
           text_y = box[1] - text_height - 5 
+          image_height , image_width = image.size
+          text_x,text_y = clamp_coordinates(text_x,text_y,image_height,image_width)
           draw.text((text_x, text_y), text, fill="#00ff00")   
 
 def test():
