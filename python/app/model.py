@@ -28,7 +28,7 @@ class Model:
     def load() -> None:
         if Model.__processor is None:
           Model.__processor = DetrImageProcessor.from_pretrained("facebook/detr-resnet-50",
-                                                                 size = {"shortest_edge": 800, "longest_edge": 9333})
+                                                                 size = {"shortest_edge": 800, "longest_edge": 99333})
         if Model.__model is None:
          Model.__model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50")
          
