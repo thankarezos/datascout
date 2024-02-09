@@ -89,10 +89,11 @@ class UploadController(
         } else {
             setOf()
         }
+        val labelSetCopy = HashSet(labelSet)
 
         val image = Image(
             userId = userId,
-            labels = labelSet
+            labels = labelSetCopy
         )
 
         val fileExtension = "png"
