@@ -35,11 +35,7 @@ async function getBase64(file: Blob) {
 
 
 const logout = () => {
-    // Remove JWT from local storage
-    localStorage.removeItem('jwt'); // Change 'jwtToken' to the key you used to store the JWT
-    // Redirect to the login page or perform any other necessary action
-    // For example, you can use React Router to navigate to the login page
-    // Example using React Router:
+    document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     window.location.href = '/login'; // Redirect to the login page
 };
 
