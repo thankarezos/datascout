@@ -122,7 +122,7 @@ async def antt(scores: Annotated[str, Form()]=None,file: Annotated[UploadFile, F
         image = from_url(uri)
     if scores is not None:
       scores = dict(json.loads(scores))
-      if scores :
+      if scores and "scores" in scores and len(scores["scores"]) > 0:
         annotate(dict(scores),image)
     return StreamingResponse( io.BytesIO(dump_bytes(image)) , media_type="image/png")
 
