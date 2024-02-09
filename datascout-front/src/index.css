@@ -15,30 +15,51 @@
 .login-form-button {
   width: 100%;
 }
-
-.label-container {
-  display: flex;
-  flex-direction: column;
-  /* background-color: brown; */
-}
-
-.labels-titles {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  background-color: aqua;
-
-}
-
+/*//////////////////////////*/
 .label-container p {
   width: 50%;
   margin: 0; 
   padding: 5px;
 }
 
+.label-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.labels-titles {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f0f0f0;
+  padding: 5px;
+  font-weight: bold;
+}
+
 .inside-label {
   display: flex;
+  justify-content: space-between;
+  padding: 5px;
 }
+
+.inside-label p {
+  margin: 0;
+}
+
+.labels-titles p,
+.inside-label p {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  color: #333;
+}
+
+.inside-label p:last-child {
+  color: #007bff;
+  font-weight: bold;
+}
+/*//////////////////////////*/
 
 .preview-image-container {
   display: flex;
