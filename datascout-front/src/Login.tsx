@@ -3,6 +3,7 @@ import './index.css';
 import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 //login model
 interface LoginCredentials {
@@ -10,10 +11,14 @@ interface LoginCredentials {
     password: string;
 }
 const NormalLoginForm = () => {
+  const navigate = useNavigate();
+
   const onFinish = (values: LoginCredentials) => {
     axios.post('/api/login', values)
     .then(response => {
       //go to user page
+      navigate('/');
+
         console.log(response);
     })
     .catch(error => {

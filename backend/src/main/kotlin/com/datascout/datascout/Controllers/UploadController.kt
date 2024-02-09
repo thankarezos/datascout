@@ -174,11 +174,11 @@ class UploadController(
         return ResponseEntity.ok(Response(data = imagesDto))
     }
 
-    @GetMapping("/image/{id}/annotated={annotated}")
+    @GetMapping("/image/{id}")
     @ResponseBody
     fun getImageFile(request: HttpServletRequest,
-                        @PathVariable("id") id: Long,
-                     @PathVariable("annotated") annotated: Boolean = false
+                     @PathVariable("id") id: Long,
+                     @RequestParam("annotated", required = false, defaultValue = "false") annotated: Boolean
 
     ): ResponseEntity<ByteArray> {
         val jwt = request.cookies?.firstOrNull { it.name == "jwt" }?.value
@@ -214,6 +214,40 @@ class UploadController(
 
 
     }
+    @PostMapping("/image/{id}")
+    fun deleteImage(request: HttpServletRequest,
+                    @PathVariable("id") id: Long
+    ): ResponseEntity<Response<String>> {
+        val jwt = request.cookies?.firstOrNull { it.name == "jwt" }?.value
+        if (jwt == null) {
+            return ResponseEntity.status(401).body(Response(error = "Unauthorized"))
+        }
+        val userId = jwtUtil.validateAndExtractUserId(jwt)
+                ?: return ResponseEntity.status(401).body(Response(error = "Unauthorized"))
+        // Method to handle GET requests to "/users"
+        val image = imageRepo.findById(id).orElse(null) ?: return ResponseEntity.notFound().build()
+
+        if (image.userId != userId) {
+            return ResponseEntity.status(401).body(Response(error = "Unauthorized"))
+        }
+
+        imageRepo.delete(image)
+
+        val filePath = Paths.get(originalImagesPath, image.path)
+        //if the file exists, delete it
+        if (Files.exists(filePath)) {
+            Files.delete(filePath)
+        }
+
+        val anntFilePath = Paths.get(annotatedImagesPath, image.path)
+        //if the file exists, delete it
+        if (Files.exists(anntFilePath)) {
+            Files.delete(anntFilePath)
+        }
+
+        return ResponseEntity.ok(Response())
+    }
+
 
     private fun infer(file: MultipartFile): JsonResponse?
     {

@@ -7,3 +7,49 @@
 .login-form-button {
   width: 100%;
 }
+
+.label-container {
+  display: flex;
+  flex-direction: column;
+  /* background-color: brown; */
+}
+
+.labels-titles {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  background-color: aqua;
+
+}
+
+.label-container p {
+  width: 50%;
+  margin: 0; 
+  padding: 5px;
+}
+
+.inside-label {
+  display: flex;
+}
+
+.preview-image-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px; /* Adjust the space between images if needed */
+}
+
+.preview-image {
+  flex: 1; /* Each image container will take up half the modal width */
+  
+}
+
+.ant-upload {
+  width: 150px !important;
+  height: 150px !important;
+}
+
+.ant-upload-list-item-container {
+  width: 150px !important;
+  height: 150px !important;
+}
