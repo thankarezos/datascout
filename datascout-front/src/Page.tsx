@@ -34,10 +34,7 @@ async function getBase64(file: Blob) {
 }
 
 
-const logout = () => {
-    document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    window.location.href = '/login'; // Redirect to the login page
-};
+
 
 
 const PicturesWall: React.FC = () => {
@@ -48,6 +45,11 @@ const PicturesWall: React.FC = () => {
     const [fileList, setFileList] = useState<UploadFile<unknown>[]>([]);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    const logout = async () => {
+        axios.post("/api/logout");
+        navigate("/login");
+    };
 
     useEffect(() => {
         const getImages = () => {
