@@ -9,6 +9,7 @@ import com.datascout.datascout.models.Users
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
+import org.springframework.security.crypto.bcrypt.BCrypt
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -34,9 +35,11 @@ class UserController(
         val usernameToLogin = loginRequest.username
         val passwordToLogin = loginRequest.password
 
-        val user = userRepository.findByUsernameAndPassword(usernameToLogin, passwordToLogin)
+        val user = userRepository.findByUsername(usernameToLogin)
 
-        if (user == null) {
+
+
+        if (user == null || !verifyPassword(passwordToLogin, user.password)) {
             return ResponseEntity.status(401).body(Response("Invalid username or password"))
         }
         else {
@@ -72,7 +75,7 @@ class UserController(
 
         val newUser = Users(
             username = username,
-            password = password,
+            password = hashPassword(password),
             email = email,
         )
 
@@ -82,4 +85,15 @@ class UserController(
         return ResponseEntity.ok(Response())
 
     }
+
+
+    fun hashPassword(password: String): String {
+        return BCrypt.hashpw(password, BCrypt.gensalt())
+    }
+
+    fun verifyPassword(candidate: String, hashed: String): Boolean {
+        return BCrypt.checkpw(candidate, hashed)
+    }
+
+
 }
