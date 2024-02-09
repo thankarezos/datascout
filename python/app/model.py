@@ -124,8 +124,8 @@ async def antt(scores: Annotated[str, Form()],file: Annotated[UploadFile, Form()
 
 @app.post("/infer")
 async def root(file : Annotated[list[UploadFile],Form()] = None , 
-               uri : Annotated[list[str],Form()] = None,
-               whitelist : Annotated[list[str],Form()] = None):
+               uri : Annotated[str,Form()] = None,
+               whitelist : Annotated[str,Form()] = None):
     images = []
     if file is not None:
      for f in file:
@@ -133,11 +133,13 @@ async def root(file : Annotated[list[UploadFile],Form()] = None ,
         image = Image.open(io.BytesIO(contents))
         images.append(image)
 
-    if uri is not None:
+    if uri:
+        uri = uri.replace('{','').replace('}','').replace('[','').replace(']','').split(',')
         images += [from_url(u) for u in uri]
 
     pred = Model.predict(images)
     if whitelist:
+        whitelist = whitelist.replace('{','').replace('}','').replace('[','').replace(']','').split(',')
         s = set(whitelist)
         newpreds = []
         for i in range(len(pred)):
