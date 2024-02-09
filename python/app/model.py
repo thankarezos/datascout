@@ -42,7 +42,7 @@ class Model:
 
 
 def from_url(url) -> Image:
-        return Image.open(requests.get(url,stream=True).raw)
+        return Image.open(requests.get(url,stream=True).raw).convert('RGB')
 
 def dump_bytes(im : Image)->str:
     image_bytes_io = io.BytesIO()
@@ -54,7 +54,7 @@ def to_bytes(t : torch.tensor)->str:
     return t.detach().cpu().numpy().tolist()
 
 def from_bytes(bytes : str | bytes | bytearray)->Image:
-    return Image.fromarray(np.array(json.loads(bytes),dtype='uint8'))
+    return Image.fromarray(np.array(json.loads(bytes),dtype='uint8')).convert('RGB')
 
 def filter(results : dict , whitelist : set = None) -> dict:
     if whitelist is None:
@@ -114,7 +114,7 @@ async def antt(scores: Annotated[str, Form()],file: Annotated[UploadFile, Form()
    
     if file is not None:
      contents = await file.read()
-     image = Image.open(io.BytesIO(contents))
+     image = Image.open(io.BytesIO(contents)).convert('RGB')
     else :
         assert uri is not None
         image = from_url(uri)
@@ -130,7 +130,7 @@ async def root(file : Annotated[list[UploadFile],Form()] = None ,
     if file is not None:
      for f in file:
         contents = await f.read()
-        image = Image.open(io.BytesIO(contents))
+        image = Image.open(io.BytesIO(contents)).convert('RGB')
         images.append(image)
 
     if uri:
