@@ -18,21 +18,19 @@ interface Error{
 }
 
 
-const NormalLoginForm = () => {
+const NormalRegisterForm = () => {
   const navigate = useNavigate();
   const [error, setError] = useState<Error>({error: '', success: false});
 
   const onFinish = (values: LoginCredentials) => {
-    axios.post('/api/login', values)
+    axios.post('/api/register', values)
     .then(response => {
       //go to user page
-      navigate('/');
+      navigate('/login');
       console.log(response);
     })
     .catch(error => {
       setError({error: error.response.data.error, success: false});
-      // error = error.response.error
-      // console.log(error);
     });
   };
 
@@ -58,6 +56,17 @@ const NormalLoginForm = () => {
           <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
         </Form.Item>
         <Form.Item
+          name="email"
+          rules={[
+            {
+              required: true,
+              message: 'Please input your Email!',
+            },
+          ]}
+        >
+          <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" />
+        </Form.Item>
+        <Form.Item
           name="password"
           rules={[
             {
@@ -66,6 +75,23 @@ const NormalLoginForm = () => {
             },
           ]}
         >
+          
+          <Input
+            prefix={<LockOutlined className="site-form-item-icon" />}
+            type="password"
+            placeholder="Password"
+          />
+        </Form.Item>
+        <Form.Item
+          name="repeatPassword"
+          rules={[
+            {
+              required: true,
+              message: 'Please input your Password!',
+            },
+          ]}
+        >
+          
           <Input
             prefix={<LockOutlined className="site-form-item-icon" />}
             type="password"
@@ -79,9 +105,9 @@ const NormalLoginForm = () => {
 
         <Form.Item>
           <Button type="primary" htmlType="submit" className="login-form-button">
-            Log in
+            Register
           </Button>
-          Or <a onClick={() => navigate('/register')}>register now!</a>
+            Or <a onClick={() => navigate('/login')}>login now!</a>
         </Form.Item>
       </Form>
     </div>
@@ -89,4 +115,4 @@ const NormalLoginForm = () => {
 };
 
 
-export default NormalLoginForm;
+export default NormalRegisterForm;

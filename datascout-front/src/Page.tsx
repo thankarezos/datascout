@@ -2,20 +2,20 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import "antd/dist/reset.css";
 import "./index.css";
-import { Upload, Modal, Form, UploadFile } from "antd";
+import { Upload, Modal, Form, UploadFile, Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import axios from "axios";
 
 interface Image {
-        id: number;
-        userId: number;
-        path: string;
-        labels: Label[];
+    id: number;
+    userId: number;
+    path: string;
+    labels: Label[];
 }
 
 interface Label {
-        label: string;
-        count: number;
+    label: string;
+    count: number;
 }
 
 async function getBase64(file: Blob) {
@@ -41,9 +41,9 @@ const logout = () => {
     // For example, you can use React Router to navigate to the login page
     // Example using React Router:
     window.location.href = '/login'; // Redirect to the login page
-  };
+};
 
-  
+
 const PicturesWall: React.FC = () => {
     const [previewVisible, setPreviewVisible] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
@@ -56,41 +56,41 @@ const PicturesWall: React.FC = () => {
     useEffect(() => {
         const getImages = () => {
             axios.get('/api/images')
-            .then(response => {
-                const images: Image[] = response.data.data;
-                //if authorized go to login page
-                
-                
-                
-                setFileList(images.map(image => {
-                    return {
-                        uid: image.id.toString(),
-                        name: image.path,
-                        status: "done",
-                        url: `/api/image/${image.id}`,
-                        labels: image.labels.map(label => {
-                            return {
-                                label: label.label,
-                                count: label.count
-                            };
-                        })
-                    };
-                }));
-                
-            })
-            .catch(error => {
-                if (error.response.status === 401) {
-                    navigate("/auth");
-                }
-                console.log(error);
-                
-            });
+                .then(response => {
+                    const images: Image[] = response.data.data;
+                    //if authorized go to login page
+
+
+
+                    setFileList(images.map(image => {
+                        return {
+                            uid: image.id.toString(),
+                            name: image.path,
+                            status: "done",
+                            url: `/api/image/${image.id}`,
+                            labels: image.labels.map(label => {
+                                return {
+                                    label: label.label,
+                                    count: label.count
+                                };
+                            })
+                        };
+                    }));
+
+                })
+                .catch(error => {
+                    if (error.response.status === 401) {
+                        navigate("/auth");
+                    }
+                    console.log(error);
+
+                });
         };
-        
+
         if (!loading) {
             getImages();
         }
-    
+
     }, [loading, navigate]);
 
     useEffect(() => {
@@ -101,8 +101,8 @@ const PicturesWall: React.FC = () => {
             setLoading(false);
         }
     }, [fileList]);
-    
-    
+
+
 
 
 
@@ -112,11 +112,11 @@ const PicturesWall: React.FC = () => {
         if (!file.url && !file.preview) {
             file.preview = await getBase64(file.originFileObj as Blob);
         }
-    
+
         // Assuming `file.url` is the path to the non-annotated image
         setPreviewImage(file.url || file.preview);
         console.log(file.labels);
-    
+
         // Construct the URL for the annotated image. Adjust according to your API.
         // For example, if the annotated image is accessed via a query parameter:
         const annotatedUrl = file.url ? `${file.url}?annotated=true` : '';
@@ -125,15 +125,15 @@ const PicturesWall: React.FC = () => {
         if (file.labels) {
             setCurrentLabels(file.labels);
         }
-        
+
         setPreviewVisible(true);
     };
 
     const deleteImage = async (fileId: number) => {
         await axios.post(`/api/image/${fileId}`);
     };
-    
-    
+
+
 
     const handleChange = ({ file, fileList }: { file: UploadFile, fileList: UploadFile<unknown>[] }) => {
         // If the file was removed, call the delete function
@@ -198,7 +198,7 @@ const PicturesWall: React.FC = () => {
                                 <div className="inside-label" key={index}>
                                     <p>{label.label}</p>
                                     <p>{label.count}</p>
-                                </div>   
+                                </div>
                             ))}
                         </div>
                     </Modal>

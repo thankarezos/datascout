@@ -4,6 +4,7 @@ import './App.css';
 // import UploadPage from './Upload';
 import NormalLoginForm from './Login';
 import PicturesWall from './Page';
+import NormalRegisterForm from './Register';
 
 // import AuthPage from './AuthPage';
 
@@ -11,7 +12,9 @@ const App: React.FC = () => {
   return (
       <Router>
         <Routes>
-          <Route path="/auth" element={<NormalLoginForm />} />
+          <Route path="/login" element={<NormalLoginForm />} />
+          <Route path="/register" element={<NormalRegisterForm />} />
+
           <Route path="/" element={<PicturesWall />} />
           {/* <Route path="/upload" component={UploadPage} /> */}
         </Routes>
