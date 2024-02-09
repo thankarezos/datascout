@@ -9,5 +9,5 @@ export default defineConfig({
       // Proxying the /api requests to the backend server
       '/api': 'http://localhost:8080'
     }
-  }
+  },
 })
