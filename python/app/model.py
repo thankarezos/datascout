@@ -27,7 +27,7 @@ class Model:
     @staticmethod
     def load() -> None:
         if Model.__processor is None:
-          Model.__processor = DetrImageProcessor.from_pretrained("facebook/detr-resnet-50")
+          Model.__processor = DetrImageProcessor.from_pretrained("facebook/detr-resnet-50",max_size=None)
         if Model.__model is None:
          Model.__model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50")
          
@@ -35,11 +35,12 @@ class Model:
     @staticmethod
     def predict(image) -> dict:
        assert Model.__processor is not None and Model.__model is not None
-       inputs = Model.__processor(images=image, return_tensors="pt")
-       outputs = Model.__model(**inputs)
-       target_sizes = [ img.size[::-1] for img in image ]
-       #why do these tensors require gradients????
-       return Model.__processor.post_process_object_detection(outputs, target_sizes=target_sizes, threshold=0.9)
+       with torch.no_grad():
+           inputs = Model.__processor(images=image, return_tensors="pt")
+           outputs = Model.__model(**inputs)
+           target_sizes = [ img.size[::-1] for img in image ]
+           #why do these tensors require gradients????
+           return Model.__processor.post_process_object_detection(outputs, target_sizes=target_sizes, threshold=0.9)
 
 
 def from_url(url) -> Image:
