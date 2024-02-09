@@ -122,6 +122,7 @@ class UploadController(
         }
 
 
+
         val anntFile = annt(file, responseFromPython)
 
 
@@ -307,7 +308,8 @@ class UploadController(
         if (!file.isEmpty) {
             body.add("file", file.resource)
         }
-        body.add("scores", serializedResponse)
+        if (serializedResponse != null)
+            body.add("scores", serializedResponse)
 
         val requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
 
