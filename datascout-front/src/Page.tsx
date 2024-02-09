@@ -165,7 +165,9 @@ const PicturesWall: React.FC = () => {
 
     return (
         <>
-            <Button type="primary" onClick={logout}></Button>
+           <div style={{ position: 'absolute', top: 10, right: 10 }}>
+            <Button type="primary" onClick={logout}>Logout</Button>
+            </div>
             <Form layout="vertical" className="image-upload-form">
                 <Form.Item className="image-upload-form-item">
                     <Upload
