@@ -112,7 +112,7 @@ def test():
 
     
 @app.post("/annt")
-async def antt(scores: Annotated[str, Form()],file: Annotated[UploadFile, Form()] = None  , uri: Annotated[str,Form()] = None):
+async def antt(scores: Annotated[str, Form()]=None,file: Annotated[UploadFile, Form()] = None  , uri: Annotated[str,Form()] = None):
    
     if file is not None:
      contents = await file.read()
