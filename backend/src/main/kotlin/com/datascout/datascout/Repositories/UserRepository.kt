@@ -9,5 +9,6 @@ interface UserRepository : JpaRepository<Users, Long> {
     // Basic CRUD methods are inherited
     fun findByUsername(username: String): Users?
     fun findByUsernameAndPassword(username: String, password: String): Users?
+    fun findByEmail(email: String): Users?
 }
 

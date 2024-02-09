@@ -1,10 +1,11 @@
 package com.datascout.datascout.controllers
 
 import com.datascout.datascout.JwtUtil
+import com.datascout.datascout.Repositories.UserRepository
 import com.datascout.datascout.dto.RegisterDto
 import com.datascout.datascout.dto.Response
 import com.datascout.datascout.dto.UsersDto
-import com.datascout.datascout.service.UserService
+import com.datascout.datascout.models.Users
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
@@ -13,24 +14,27 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-data class tokenResponse(
+data class TokenResponse(
     val token: String,
     val userId: Int
 )
 
 @RestController
 @RequestMapping("/api")
-class UserController(private val userService: UserService, private val jwtUtil: JwtUtil) {
+class UserController(
+    private val jwtUtil: JwtUtil,
+    private val userRepository: UserRepository
+) {
 
     @PostMapping("/login")
     fun login(@RequestBody loginRequest: UsersDto,
               response: HttpServletResponse
-    ): ResponseEntity<Response<tokenResponse>> {
+    ): ResponseEntity<Response<TokenResponse>> {
 
         val usernameToLogin = loginRequest.username
         val passwordToLogin = loginRequest.password
 
-        val user = userService.findUserByUserNameAndPassword(usernameToLogin, passwordToLogin)
+        val user = userRepository.findByUsernameAndPassword(usernameToLogin, passwordToLogin)
 
         if (user == null) {
             return ResponseEntity.status(401).body(Response("Invalid username or password"))
@@ -42,21 +46,35 @@ class UserController(private val userService: UserService, private val jwtUtil: 
             cookie.path = "/"
             cookie.isHttpOnly = true
             response.addCookie(cookie)
-            return ResponseEntity.ok(Response( tokenResponse(token, userId)))
+            return ResponseEntity.ok(Response( TokenResponse(token, userId)))
         }
     }
 
     @PostMapping("/register")
-    fun register(@RequestBody registrationRequest: RegisterDto): ResponseEntity<String> {
+    fun register(@RequestBody registrationRequest: RegisterDto): ResponseEntity<Response<String>> {
 
         val username = registrationRequest.username
         val password = registrationRequest.password
         val email = registrationRequest.email
 
-        return if (userService.registerUser(username, password, email)) {
-            ResponseEntity.ok("Registration successful")
-        } else {
-            ResponseEntity.status(400).body("Username already exists")
+        if(userRepository.findByUsername(username) != null) {
+            return ResponseEntity.status(401).body(Response("Username already exists"))
         }
+
+        if(userRepository.findByEmail(email) != null) {
+            return ResponseEntity.status(401).body(Response("Email already exists"))
+        }
+
+        val newUser = Users(
+            username = username,
+            password = password,
+            email = email,
+        )
+
+
+        userRepository.save(newUser)
+
+        return ResponseEntity.ok(Response())
+
     }
 }
