@@ -42,8 +42,8 @@ def test_whitelist():
 def test_multi():
     STOP = 'https://www.ilankelman.org/stopsigns/austria.jpg'
     files = {
-        'whitelist' : ['couch','stop sign', 'car'],
-        'uri' : [URI , STOP]
+        'whitelist' : ','.join(['couch','stop sign', 'car']),
+        'uri' : ','.join([URI , STOP])
     }
         
     res = requests.post('http://localhost:3333/infer',data=files).text
