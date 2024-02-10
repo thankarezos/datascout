@@ -10,10 +10,7 @@ import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.bcrypt.BCrypt
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 data class TokenResponse(
     val token: String,
@@ -48,9 +45,20 @@ class UserController(
             val cookie = Cookie("jwt", token)
             cookie.path = "/"
             cookie.isHttpOnly = true
+//            cookie.domain = "localhost:5173"
             response.addCookie(cookie)
             return ResponseEntity.ok(Response( TokenResponse(token, userId)))
         }
+    }
+
+    @PostMapping("/logout")
+    fun logout(response: HttpServletResponse): ResponseEntity<Any> {
+        val cookie = Cookie("jwt", "")
+        cookie.path = "/"
+        cookie.isHttpOnly = true
+        cookie.maxAge = 0  // Set cookie to expire immediately
+        response.addCookie(cookie)
+        return ResponseEntity.ok().build<Any>()
     }
 
     @PostMapping("/register")
