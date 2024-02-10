@@ -4,7 +4,9 @@ from PIL import Image
 import io
 import numpy as np
 
-URI = "https://image.cnbcfm.com/api/v1/image/106947859-GettyImages-167503543.jpg?v=1632760991"
+URI = "https://cbx-prod.b-cdn.net/COLOURBOX2485928.jpg?width=1600&height=1600&quality=90"
+#"https://previews.123rf.com/images/philipus/philipus0712/philipus071200328/2250428-lots-of-cars-parking-in-the-city.jpg"
+#"https://image.cnbcfm.com/api/v1/image/106947859-GettyImages-167503543.jpg?v=1632760991"
 #"https://media.istockphoto.com/id/155287967/photo/cars-in-rush-hour-with-traffic-at-dawn.jpg?s=612x612&w=0&k=20&c=tDAaJQMHIh6nFDr0rJlD44tEtmj2srdpoSTKL7C5SGE="
 #"https://media.discordapp.net/attachments/1079599772287127653/1191881082375770112/415059350_390596366697355_6342356019264221322_n.png?ex=65a70cc2&is=659497c2&hm=29163c39279e10fbae2a9a6a16e293e10cace0da51e8fe5eeb7527a7696f4554&=&format=webp&quality=lossless&width=475&height=594"
 

@@ -40,7 +40,7 @@ class Model:
            outputs = Model.__model(**inputs)
            target_sizes = [ img.size[::-1] for img in image ]
            #why do these tensors require gradients????
-           return Model.__processor.post_process_object_detection(outputs, target_sizes=target_sizes, threshold=0.8)
+           return Model.__processor.post_process_object_detection(outputs, target_sizes=target_sizes, threshold=0.5)
 
 
 def from_url(url) -> Image:
