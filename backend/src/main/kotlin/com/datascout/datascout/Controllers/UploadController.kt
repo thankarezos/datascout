@@ -271,7 +271,8 @@ class UploadController(
             "bicycle",
             "motorcycle",
             "truck",
-            "bus"
+            "bus",
+            "sports ball"
         )
 
         val commaSeperatedItems = items.joinToString(",")
