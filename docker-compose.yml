@@ -10,6 +10,8 @@ services:
       POSTGRES_USER: datascout
       POSTGRES_PASSWORD: datascout
       POSTGRES_DB: datascout_db
+    ports:
+      - "9432:5432"
     networks:
       - datascout
     profiles:
